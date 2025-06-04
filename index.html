@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Deposit Dokter - Modern Dashboard</title>
+    <title>Sistem Deposit Dokter - Wowdash Style</title>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -15,30 +15,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Ikon (Feather Icons) -->
+    <script src="https://unpkg.com/feather-icons"></script>
 
     <style>
+        /* ===== PRESET & UTILITIES ===== */
         :root {
-            --primary-color: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary-color: #f59e0b;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --info-color: #3b82f6;
-            --light-color: #f8fafc;
-            --dark-color: #1e293b;
+            --primary-color: #4f46e5;
+            /* Indigo-600 from Tailwind */
+            --primary-hover: #4338ca;
+            /* Indigo-700 */
+            --secondary-color: #64748b;
+            /* Slate-500 */
+            --background-color: #f1f5f9;
+            /* Slate-100 */
+            --card-background: #ffffff;
             --text-primary: #1e293b;
+            /* Slate-800 */
             --text-secondary: #64748b;
+            /* Slate-500 */
             --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            --border-radius: 12px;
-            --border-radius-lg: 16px;
-            --sidebar-width: 280px;
+            /* Slate-200 */
+            --green: #10b981;
+            /* Emerald-500 */
+            --red: #ef4444;
+            /* Red-500 */
+            --yellow: #f59e0b;
+            /* Amber-500 */
         }
 
         * {
@@ -49,962 +57,111 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            background-color: var(--background-color);
             color: var(--text-primary);
             line-height: 1.6;
-            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* ===== LAYOUT STRUCTURE ===== */
-        .app-layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: var(--sidebar-width);
-            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
-            color: white;
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-            transition: transform 0.3s ease;
-            z-index: 1000;
-            box-shadow: var(--shadow-xl);
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            transition: margin-left 0.3s ease;
-            min-height: 100vh;
-        }
-
-        .main-content.expanded {
-            margin-left: 0;
-        }
-
-        /* ===== SIDEBAR STYLES ===== */
-        .sidebar-header {
-            padding: 2rem 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-
-        .sidebar-header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .sidebar-header p {
-            font-size: 0.875rem;
-            opacity: 0.8;
-        }
-
-        .sidebar-nav {
-            padding: 1.5rem 0;
-        }
-
-        .nav-item {
-            margin-bottom: 0.5rem;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.5rem;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border-radius: 0;
-            position: relative;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background: linear-gradient(90deg, rgba(99, 102, 241, 0.8), rgba(99, 102, 241, 0.4));
-            color: white;
-            box-shadow: inset 4px 0 0 var(--primary-color);
-        }
-
-        .nav-link i {
-            width: 20px;
-            text-align: center;
-            font-size: 1.125rem;
-        }
-
-        .user-profile {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .user-details h4 {
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .user-details p {
-            font-size: 0.75rem;
-            opacity: 0.7;
-        }
-
-        .logout-btn {
-            width: 100%;
-            background: rgba(239, 68, 68, 0.8);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            color: white;
-            padding: 0.75rem;
-            border-radius: var(--border-radius);
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .logout-btn:hover {
-            background: var(--danger-color);
-            transform: translateY(-1px);
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            background: white;
-            padding: 1.5rem 2rem;
-            box-shadow: var(--shadow-sm);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-primary);
-        }
-
-        .page-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .connection-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .connection-status.online {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-        }
-
-        .connection-status.offline {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger-color);
-        }
-
-        .connection-status.syncing {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning-color);
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .content-wrapper {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* ===== CARDS ===== */
-        .card {
-            background: white;
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
+        body.drawer-open {
             overflow: hidden;
+            /* Prevent scrolling of main content when drawer is open */
         }
 
-        .card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-2px);
-        }
-
-        .card-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-color);
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .card-subtitle {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .card-body {
-            padding: 2rem;
-        }
-
-        /* ===== DOCTOR SELECTOR ===== */
-        .doctor-selector-card {
-            margin-bottom: 2rem;
-        }
-
-        .doctor-controls {
-            display: flex;
-            gap: 1rem;
-            align-items: stretch;
-        }
-
-        .doctor-select-wrapper {
-            flex: 1;
-            position: relative;
-        }
-
-        .doctor-select-wrapper::after {
-            content: '\f078';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            color: var(--text-secondary);
-        }
-
-        .doctor-select {
-            width: 100%;
-            padding: 1rem 2.5rem 1rem 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 500;
-            background: white;
-            color: var(--text-primary);
-            appearance: none;
-            transition: all 0.3s ease;
-        }
-
-        .doctor-select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .doctor-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        /* ===== BUTTONS ===== */
-        .btn {
-            padding: 1rem 1.5rem;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-        }
-
-        .btn-outline {
-            background: white;
-            border: 2px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.75rem;
-        }
-
-        .btn-icon {
-            padding: 0.75rem;
-            width: 44px;
-            height: 44px;
-        }
-
-        /* ===== STATISTICS CARDS ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: var(--border-radius-lg);
-            padding: 2rem;
-            box-shadow: var(--shadow-md);
-            border-left: 4px solid;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            transform: translate(30px, -30px);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .stat-card.success {
-            border-left-color: var(--success-color);
-        }
-
-        .stat-card.danger {
-            border-left-color: var(--danger-color);
-        }
-
-        .stat-card.primary {
-            border-left-color: var(--primary-color);
-        }
-
-        .stat-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .stat-title {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            opacity: 0.8;
-        }
-
-        .stat-icon.success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-        }
-
-        .stat-icon.danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger-color);
-        }
-
-        .stat-icon.primary {
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary-color);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value.negative {
-            color: var(--danger-color);
-        }
-
-        .stat-change {
-            font-size: 0.875rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .stat-change.positive {
-            color: var(--success-color);
-        }
-
-        .stat-change.negative {
-            color: var(--danger-color);
-        }
-
-        /* ===== FORM STYLES ===== */
-        .form-section {
-            background: white;
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-md);
-            margin-bottom: 2rem;
-        }
-
-        .form-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: between;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        }
-
-        .form-body {
-            padding: 2rem;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .form-input:hover {
-            border-color: var(--primary-dark);
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        /* ===== TABLE STYLES ===== */
-        .table-card {
-            margin-bottom: 2rem;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: var(--border-radius);
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        .table th {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 700;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.875rem;
-            vertical-align: middle;
-        }
-
-        .table tr:hover {
-            background: rgba(99, 102, 241, 0.02);
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .amount-cell {
-            font-weight: 700;
-            text-align: right;
-        }
-
-        .amount-positive {
-            color: var(--success-color);
-        }
-
-        .amount-negative {
-            color: var(--danger-color);
-        }
-
-        .total-row {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            font-weight: 700;
-        }
-
-        .delete-btn {
-            background: var(--danger-color);
-            color: white;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .delete-btn:hover {
-            background: #dc2626;
-            transform: scale(1.1);
-        }
-
-        /* ===== MOBILE TRANSACTION CARDS ===== */
-        .transaction-cards {
-            display: none;
-        }
-
-        .transaction-card {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-        }
-
-        .transaction-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-1px);
-        }
-
-        .transaction-card:last-child {
-            margin-bottom: 0;
-        }
-
-        .transaction-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
-        }
-
-        .transaction-info h4 {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .transaction-info p {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-
-        .transaction-amount {
-            text-align: right;
-            flex-shrink: 0;
-            margin-left: 1rem;
-        }
-
-        .transaction-amount .amount {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .transaction-amount .type-badge {
-            font-size: 0.7rem;
-        }
-
-        .transaction-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 0.75rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .transaction-date {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .transaction-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .transaction-card .delete-btn {
-            width: 28px;
-            height: 28px;
-            font-size: 0.7rem;
-        }
-
-        /* Summary card for mobile */
-        .mobile-summary {
-            display: none;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-top: 1rem;
-            font-weight: 600;
-            text-align: center;
-            color: var(--text-primary);
-        }
-
-        /* ===== EMPTY STATES ===== */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-secondary);
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            color: var(--border-color);
-            margin-bottom: 1rem;
-        }
-
-        .empty-state h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .empty-state p {
-            font-size: 0.875rem;
-        }
-
-        /* ===== MODALS ===== */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 2000;
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-content {
-            background: white;
-            margin: 5% auto;
-            padding: 0;
-            width: 90%;
-            max-width: 500px;
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-xl);
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            padding: 2rem 2rem 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .modal-footer {
-            padding: 1rem 2rem 2rem;
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-
-        /* ===== NOTIFICATIONS ===== */
-        .notification {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius);
-            color: white;
-            font-weight: 600;
-            z-index: 3000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            box-shadow: var(--shadow-xl);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            min-width: 300px;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            background: linear-gradient(135deg, var(--success-color), #059669);
-        }
-
-        .notification.error {
-            background: linear-gradient(135deg, var(--danger-color), #dc2626);
-        }
-
-        .notification.info {
-            background: linear-gradient(135deg, var(--info-color), #2563eb);
-        }
 
-        /* ===== LOGIN SCREEN ===== */
+        /* ===== LOGIN SCREEN STYLES ===== */
         .login-screen {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background-color: var(--background-color);
             text-align: center;
-            padding: 2rem;
+            padding: 20px;
         }
 
         .login-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            padding: 3rem;
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-xl);
+            background: var(--card-background);
+            padding: 40px 30px;
+            border-radius: 20px;
+            /* Increased border-radius */
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            /* Softer shadow */
             color: var(--text-primary);
-            max-width: 450px;
+            max-width: 400px;
             width: 100%;
         }
 
         .login-card h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.8rem;
+            /* Slightly smaller */
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .login-card p {
             color: var(--text-secondary);
-            margin-bottom: 2rem;
-            font-size: 1.125rem;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            /* Standardized size */
         }
 
         .google-login-btn {
-            width: 100%;
-            background: #4285f4;
-            color: white;
-            border: none;
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
-            box-shadow: var(--shadow-lg);
+            gap: 12px;
+            background: #4285f4;
+            /* Google Blue */
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            /* Rounded button */
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+            /* Button shadow */
         }
 
         .google-login-btn:hover {
             background: #3367d6;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .google-login-btn:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
+            /* Darker Google Blue on hover */
         }
 
         .google-icon {
-            width: 24px;
-            height: 24px;
-            background: white;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #4285f4;
+            width: 20px;
+            height: 20px;
         }
 
-        /* ===== LOADING ===== */
+        /* ===== LOADING & CONNECTION STATUS ===== */
         .loading {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: var(--light-color);
+            background: var(--background-color);
         }
 
         .loading-spinner {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border: 4px solid var(--border-color);
             border-top: 4px solid var(--primary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 1.5rem;
+            margin-bottom: 20px;
         }
 
         @keyframes spin {
@@ -1017,498 +174,822 @@
             }
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            :root {
-                --sidebar-width: 100%;
-            }
-
-            .sidebar {
-                transform: translateX(-100%);
-                width: 100%;
-                max-width: 320px;
-            }
-
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .content-wrapper {
-                padding: 0.75rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
-
-            .header {
-                padding: 0.75rem 1rem;
-            }
-
-            .page-title {
-                font-size: 1.25rem;
-            }
-
-            .doctor-controls {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-
-            .doctor-actions {
-                flex-direction: row;
-                gap: 0.75rem;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .form-actions {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-
-            .modal-content {
-                margin: 2rem auto;
-                width: calc(100% - 2rem);
-                max-width: 400px;
-            }
-
-            .modal-footer {
-                flex-direction: column-reverse;
-                gap: 0.75rem;
-            }
-
-            .modal-footer .btn {
-                width: 100%;
-                order: 1;
-            }
-
-            .modal-footer .btn-outline {
-                order: 2;
-            }
-
-            .notification {
-                top: 1rem;
-                right: 1rem;
-                left: 1rem;
-                min-width: auto;
-                transform: translateY(-100px);
-            }
-
-            .notification.show {
-                transform: translateY(0);
-            }
-
-            /* Mobile transaction display */
-            .table-wrapper {
-                display: none;
-            }
-
-            .transaction-cards {
-                display: block;
-            }
-
-            .mobile-summary {
-                display: block;
-            }
-
-            .user-profile {
-                position: relative;
-            }
-
-            /* Card improvements for mobile */
-            .card {
-                border-radius: 12px;
-                margin-bottom: 1rem;
-            }
-
-            .card-header {
-                padding: 1rem 1.25rem;
-            }
-
-            .card-body {
-                padding: 1.25rem;
-            }
-
-            .card-title {
-                font-size: 1.125rem;
-            }
-
-            /* Quick actions mobile layout */
-            .quick-actions-buttons {
-                flex-direction: column !important;
-                gap: 0.75rem !important;
-            }
-
-            .quick-actions .btn {
-                width: 100% !important;
-                justify-content: center;
-                flex: none !important;
-            }
-
-            .btn-text {
-                margin-left: 0.5rem;
-            }
-
-            /* Stat cards mobile optimization */
-            .stat-card {
-                padding: 1.25rem;
-            }
-
-            .stat-value {
-                font-size: 1.75rem;
-            }
-
-            .stat-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.25rem;
-            }
-
-            /* Form improvements */
-            .form-label {
-                font-size: 0.875rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .form-input {
-                padding: 0.875rem;
-                font-size: 16px;
-                /* Prevent zoom on iOS */
-            }
-
-            /* Doctor selector mobile */
-            .doctor-select {
-                padding: 0.875rem 2rem 0.875rem 0.875rem;
-                font-size: 16px;
-                /* Prevent zoom on iOS */
-            }
-
-            /* Button improvements for mobile */
-            .btn {
-                padding: 0.875rem 1.25rem;
-                font-size: 0.875rem;
-                min-height: 48px;
-                /* Touch target size */
-            }
-
-            .btn-icon {
-                width: 48px;
-                height: 48px;
-            }
-
-            .btn-sm {
-                padding: 0.625rem 1rem;
-                font-size: 0.8rem;
-                min-height: 40px;
-            }
-
-            /* Sidebar mobile improvements */
-            .sidebar-header {
-                padding: 1.5rem 1rem;
-            }
-
-            .sidebar-header h1 {
-                font-size: 1.25rem;
-            }
-
-            .nav-link {
-                padding: 0.875rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .user-info {
-                gap: 0.75rem;
-            }
-
-            .user-avatar {
-                width: 36px;
-                height: 36px;
-            }
-
-            .user-details h4 {
-                font-size: 0.8rem;
-            }
-
-            .user-details p {
-                font-size: 0.7rem;
-            }
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            /* Positioned at bottom-left */
+            left: 20px;
+            padding: 8px 12px;
+            border-radius: 25px;
+            /* Pill shape */
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        @media (max-width: 480px) {
-            .content-wrapper {
-                padding: 0.5rem;
-            }
-
-            .login-card {
-                padding: 2rem 1.5rem;
-                margin: 1rem;
-            }
-
-            .stat-card {
-                padding: 1rem;
-            }
-
-            .card-body {
-                padding: 1rem;
-            }
-
-            .card-header {
-                padding: 1rem;
-            }
-
-            .header {
-                padding: 0.75rem;
-            }
-
-            .page-title {
-                font-size: 1.125rem;
-            }
-
-            /* Extra small mobile optimizations */
-            .stats-grid {
-                gap: 0.75rem;
-            }
-
-            .modal-content {
-                margin: 10px;
-                width: calc(100% - 20px);
-            }
-
-            .modal-body {
-                padding: 1.5rem;
-            }
-
-            .modal-header {
-                padding: 1.5rem 1.5rem 1rem;
-            }
-
-            .modal-footer {
-                padding: 1rem 1.5rem 1.5rem;
-            }
-
-            /* Compact table for very small screens */
-            .table {
-                min-width: 450px;
-            }
-
-            .table th,
-            .table td {
-                padding: 0.375rem 0.25rem;
-                font-size: 0.65rem;
-            }
-
-            /* Form optimizations for small screens */
-            .form-input {
-                padding: 0.75rem;
-                font-size: 16px;
-                /* Prevent zoom on iOS */
-            }
-
-            .doctor-select {
-                padding: 0.75rem 1.75rem 0.75rem 0.75rem;
-                font-size: 16px;
-                /* Prevent zoom on iOS */
-            }
-
-            /* Connection status mobile */
-            .connection-status {
-                font-size: 0.75rem;
-                padding: 0.375rem 0.75rem;
-            }
-
-            /* Empty state mobile */
-            .empty-state {
-                padding: 2rem 1rem;
-            }
-
-            .empty-state i {
-                font-size: 3rem;
-            }
-
-            .empty-state h3 {
-                font-size: 1.125rem;
-            }
-
-            /* Sidebar mobile improvements */
-            .sidebar-header {
-                padding: 1.5rem 1rem;
-            }
-
-            .sidebar-header h1 {
-                font-size: 1.25rem;
-            }
-
-            .nav-link {
-                padding: 0.875rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .user-info {
-                gap: 0.75rem;
-            }
-
-            .user-avatar {
-                width: 36px;
-                height: 36px;
-            }
-
-            .user-details h4 {
-                font-size: 0.8rem;
-            }
-
-            .user-details p {
-                font-size: 0.7rem;
-            }
+        .connection-status.online {
+            background: var(--green);
+            color: white;
         }
 
-        /* Landscape mobile optimization */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .content-wrapper {
-                padding: 0.75rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 0.75rem;
-            }
-
-            .stat-card {
-                padding: 1rem;
-            }
-
-            .stat-value {
-                font-size: 1.5rem;
-            }
+        .connection-status.offline {
+            background: var(--red);
+            color: white;
         }
 
-        /* Very small screens (like iPhone SE) */
-        @media (max-width: 375px) {
-            .login-card h1 {
-                font-size: 2rem;
-            }
-
-            .sidebar {
-                max-width: 280px;
-            }
-
-            .table {
-                min-width: 400px;
-            }
-
-            .stat-value {
-                font-size: 1.5rem;
-            }
-
-            .form-actions {
-                gap: 0.5rem;
-            }
-
-            .doctor-actions {
-                gap: 0.5rem;
-            }
+        .connection-status.syncing {
+            background: var(--yellow);
+            color: white;
         }
 
-        /* ===== UTILITY CLASSES ===== */
-        .hidden {
-            display: none !important;
+        /* ===== MAIN APP LAYOUT ===== */
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
         }
 
-        .text-center {
+        .sidebar {
+            width: 260px;
+            background-color: var(--card-background);
+            padding: 24px;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease-in-out;
+            /* Smooth transition for drawer */
+            z-index: 1002;
+            /* Ensure sidebar is above content but below overlay if used */
+        }
+
+        .sidebar-header {
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .sidebar-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            padding-left: 5px;
+            /* Slight indent for title */
+        }
+
+        #doctorList {
+            list-style: none;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            /* Allows list to take available space */
+            overflow-y: auto;
+            /* Scroll if many doctors */
+        }
+
+        #doctorList li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+            /* Space between items */
+        }
+
+        #doctorList li:hover {
+            background-color: #f8fafc;
+            /* Light hover for non-active items */
+            color: var(--primary-color);
+        }
+
+        #doctorList li.active {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+            /* Shadow for active item */
+        }
+
+        #doctorList li.active i {
+            stroke: white;
+            /* Ensure icon color matches text */
+        }
+
+        /* Styling for empty doctor list state */
+        #doctorList .doctor-list-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            opacity: 0.8;
+            cursor: default;
+            /* Not clickable */
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            margin: 10px 0;
+            /* Add some margin */
+            min-height: 100px;
+            /* Ensure it has some height */
         }
 
-        .text-right {
-            text-align: right;
+        #doctorList .doctor-list-empty-state i {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 12px;
         }
 
-        .mb-0 {
-            margin-bottom: 0;
+        #doctorList .doctor-list-empty-state span {
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
-        .mb-1 {
-            margin-bottom: 0.5rem;
+
+        .sidebar-actions {
+            margin-top: auto;
+            /* Pushes this div to the bottom of the sidebar */
+            padding-top: 20px;
+            /* Space above action buttons */
+            border-top: 1px solid var(--border-color);
+            /* Separator line */
         }
 
-        .mb-2 {
-            margin-bottom: 1rem;
+        .sidebar-actions .btn {
+            width: 100%;
+            margin-top: 10px;
         }
 
-        .mb-3 {
-            margin-bottom: 1.5rem;
-        }
-
-        .mb-4 {
-            margin-bottom: 2rem;
-        }
-
-        .mt-0 {
+        .sidebar-actions .btn:first-child {
             margin-top: 0;
         }
 
-        .mt-1 {
-            margin-top: 0.5rem;
+        #deleteDoctorBtn {
+            display: none;
+            /* Initially hidden, JS will control visibility */
         }
 
-        .mt-2 {
-            margin-top: 1rem;
+        #logoutBtnSidebar {
+            display: none;
+            /* Hidden by default, shown on mobile drawer */
         }
 
-        .mt-3 {
-            margin-top: 1.5rem;
+
+        .main-content {
+            flex: 1;
+            padding: 24px 32px;
+            /* Standard padding */
+            overflow-y: auto;
+            /* Scroll for main content if needed */
+            position: relative;
+            /* For potential overlay or other positioned elements */
         }
 
-        .mt-4 {
-            margin-top: 2rem;
+        .main-content-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1001;
+            /* Below sidebar drawer, above main content */
         }
 
-        .flex {
+        body.drawer-open .main-content-overlay {
+            display: block;
+        }
+
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h2 {
+            /* Main page title */
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            /* Subtitle for page */
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .header-title-block {
+            /* Wrapper for h2 and p */
+            flex-grow: 1;
+            /* Allows title block to take space */
+        }
+
+        .hamburger-btn {
+            display: none;
+            /* Hidden by default, shown on mobile */
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+            /* Space between hamburger and title */
+        }
+
+        .hamburger-btn i {
+            width: 24px;
+            height: 24px;
+        }
+
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+            /* Prevent user-info from shrinking */
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-color);
+            object-fit: cover;
+            /* Ensure avatar image fits well */
+        }
+
+        .logout-btn-desktop {
+            /* Renamed for clarity */
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 8px;
+            /* Make it easier to click */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-btn-desktop:hover {
+            background-color: #f1f5f9;
+            /* Light background on hover */
+            color: var(--primary-color);
+        }
+
+        /* ===== STAT CARDS (BALANCE) ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            /* Responsive grid */
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.07);
+        }
+
+        .stat-card-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .stat-card-value {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        #remainingBalance.negative {
+            color: var(--red);
+        }
+
+        #remainingBalance.positive {
+            color: var(--green);
+        }
+
+        /* ===== ACTION BUTTONS & FORMS ===== */
+        .actions-bar {
+            background: var(--card-background);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            /* Allow buttons to wrap on smaller screens */
+            align-items: center;
+            margin-bottom: 24px;
+            /* Added margin */
+        }
+
+        .btn {
+            display: inline-flex;
+            /* Use inline-flex for better alignment */
+            align-items: center;
+            justify-content: center;
+            /* Center content in button */
+            gap: 8px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            white-space: nowrap;
+            /* Prevent button text from wrapping */
+        }
+
+        .btn i {
+            /* Style for Feather icons in buttons */
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        /* Darker green */
+        .btn-danger {
+            background: var(--red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* Darker red */
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        /* Slate-300 */
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .btn-icon {
+            /* For icon-only buttons like edit/delete in table */
+            padding: 6px;
+            width: 32px;
+            height: 32px;
+        }
+
+        .btn-icon i {
+            margin: 0;
+            /* No gap for icon-only buttons */
+        }
+
+
+        .expense-form-card {
+            /* This class might be removed if form is only in modal */
+            background: var(--card-background);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-top: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            /* Apply to select as well */
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background-color: white;
+            /* Ensure select has white background */
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px #c7d2fe;
+            /* Indigo-200 focus ring */
+        }
+
+        /* ===== TRANSACTIONS TABLE ===== */
+        .transactions-card {
+            background: var(--card-background);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-top: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border-color);
+            /* Thicker bottom border for header */
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* Row hover effect */
+
+        .amount-cell {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .income-amount {
+            color: var(--green);
+        }
+
+        .expense-amount {
+            color: var(--red);
+        }
+
+        .description-cell {
+            max-width: 250px;
+            /* Limit width */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: default;
+            /* Indicate it's hoverable for full text if implemented */
+        }
+
+        .transaction-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .edit-btn {
+            background: #e0e7ff;
+            /* Indigo-100 */
+            color: var(--primary-color);
+        }
+
+        .edit-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            /* Red-100 */
+            color: var(--red);
+        }
+
+        .delete-btn:hover {
+            background: var(--red);
+            color: white;
+        }
+
+        .delete-btn i,
+        .edit-btn i {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ===== EMPTY STATE & MODAL ===== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            background-color: #fdfdff;
+            /* Slightly off-white */
+        }
+
+        .empty-state i {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            color: var(--secondary-color);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 41, 59, 0.5);
+            /* Slate-800 with opacity */
+            z-index: 1000;
+            display: none;
+            /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            /* Padding for smaller screens */
+        }
+
+        .modal.show {
             display: flex;
         }
 
-        .flex-1 {
-            flex: 1;
+        /* Class to show modal */
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            width: 100%;
+            /* Full width on small screens */
+            max-width: 450px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: modalFadeIn 0.3s ease-out;
         }
 
-        .items-center {
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
             align-items: center;
+            gap: 10px;
         }
 
-        .justify-between {
-            justify-content: space-between;
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: flex-end;
         }
 
-        .gap-2 {
-            gap: 0.5rem;
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 2000;
+            transform: translateX(calc(100% + 20px));
+            /* Start off-screen */
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .gap-3 {
-            gap: 1rem;
+        .notification.show {
+            transform: translateX(0);
         }
 
-        .gap-4 {
-            gap: 1.5rem;
+        .notification.success {
+            background: var(--green);
+        }
+
+        .notification.error {
+            background: var(--red);
+        }
+
+        .notification.info {
+            background: #3b82f6;
+        }
+
+        /* Blue-500 */
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 992px) {
+
+            /* Tablet and below */
+            .sidebar {
+                position: fixed;
+                /* Changed for drawer behavior */
+                top: 0;
+                left: 0;
+                height: 100%;
+                transform: translateX(-100%);
+                /* Initially hidden off-screen */
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+                border-right: none;
+                /* No border when it's a drawer */
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+                /* Slide in when open */
+            }
+
+            #doctorList {
+                display: block;
+                /* Revert to block for vertical scrolling in drawer */
+                overflow-x: hidden;
+                overflow-y: auto;
+                white-space: normal;
+            }
+
+            #doctorList li {
+                min-width: auto;
+                /* Reset min-width */
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .hamburger-btn {
+                display: inline-flex;
+                /* Show hamburger on mobile */
+            }
+
+            .user-info .logout-btn-desktop {
+                display: none;
+                /* Hide desktop logout button on mobile */
+            }
+
+            .sidebar-actions #logoutBtnSidebar {
+                display: inline-flex;
+                /* Show sidebar logout button when sidebar is open (mobile) */
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            /* Mobile */
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .main-content {
+                padding: 15px;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                display: none;
+            }
+
+            /* Hide subtitle on very small screens */
+            td,
+            th {
+                padding: 10px 8px;
+                font-size: 0.85rem;
+            }
+
+            .actions-bar .btn {
+                width: 100%;
+            }
+
+            .actions-bar .btn-danger {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .modal-buttons .btn {
+                width: auto;
+            }
+
+            .sidebar .sidebar-actions .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Connection Status -->
-    <div id="connectionStatus" class="connection-status online">
-        <i class="fas fa-circle"></i>
-        <span id="statusText">Online</span>
-    </div>
 
     <!-- Loading Screen -->
     <div id="loadingScreen" class="loading">
@@ -1519,486 +1000,354 @@
     <!-- Login Screen -->
     <div id="loginScreen" class="login-screen" style="display: none;">
         <div class="login-card">
-            <h1><i class="fas fa-user-md"></i> Sistem Deposit Dokter</h1>
-            <p>Kelola keuangan dokter dengan mudah dan aman</p>
+            <h1><i data-feather="activity"></i>Sistem Deposit Dokter</h1>
+            <p>Kelola keuangan dokter dengan mudah dan modern.</p>
             <button id="googleLoginBtn" class="google-login-btn">
-                <div class="google-icon">G</div>
+                <img src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_28dp.png" alt="G"
+                    class="google-icon" />
                 Masuk dengan Google
             </button>
-            <div style="margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-secondary);">
-                Data Anda akan disimpan dengan aman di cloud dan tersinkronisasi di semua perangkat
+            <div style="margin-top: 20px; font-size: 0.9rem; color: #94a3b8;">
+                Data Anda aman dan tersinkronisasi di cloud.
             </div>
         </div>
     </div>
 
-    <!-- Main App Layout -->
+    <!-- Main Application Layout -->
     <div id="mainApp" class="app-layout" style="display: none;">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
+        <!-- Sidebar / Drawer -->
+        <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
-                <h1><i class="fas fa-user-md"></i> DoctorPay</h1>
-                <p>Modern Finance Management</p>
+                <i data-feather="briefcase" style="color: var(--primary-color); width:28px; height:28px;"></i>
+                <h1>KlinikKita</h1>
             </div>
 
-            <nav class="sidebar-nav">
-                <div class="nav-item">
-                    <a href="#" class="nav-link active" data-section="dashboard">
-                        <i class="fas fa-chart-pie"></i>
-                        Dashboard
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" data-section="doctors">
-                        <i class="fas fa-users"></i>
-                        Kelola Dokter
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" data-section="transactions">
-                        <i class="fas fa-receipt"></i>
-                        Transaksi
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" data-section="reports">
-                        <i class="fas fa-chart-bar"></i>
-                        Laporan
-                    </a>
-                </div>
-            </nav>
-
-            <div class="user-profile">
-                <div class="user-info">
-                    <img id="userAvatar" class="user-avatar" src="" alt="User">
-                    <div class="user-details">
-                        <h4 id="userName">User</h4>
-                        <p id="userEmail">user@email.com</p>
-                    </div>
-                </div>
-                <button id="logoutBtn" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Keluar
+            <p class="sidebar-title">Manajemen Dokter</p>
+            <ul id="doctorList">
+                <!-- Doctor list will be populated by JavaScript -->
+            </ul>
+            <div class="sidebar-actions">
+                <button class="btn btn-primary" onclick="showAddDoctorModal()">
+                    <i data-feather="plus-circle"></i> Tambah Dokter Baru
+                </button>
+                <button class="btn btn-danger" onclick="showDeleteDoctorModal()" id="deleteDoctorBtn">
+                    <i data-feather="trash-2"></i> Hapus Dokter Terpilih
+                </button>
+                <button class="btn btn-outline" id="logoutBtnSidebar" onclick="signOut()">
+                    <i data-feather="log-out"></i> Keluar
                 </button>
             </div>
         </aside>
+        <div id="mainContentOverlay" class="main-content-overlay"></div>
 
-        <!-- Main Content -->
-        <main class="main-content" id="mainContent">
-            <!-- Header -->
+
+        <!-- Main Content Area -->
+        <main id="mainContent" class="main-content">
+            <!-- Header Section -->
             <header class="header">
-                <div class="header-left">
-                    <button class="mobile-menu-btn" id="mobileMenuBtn">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <button id="hamburgerBtn" class="hamburger-btn">
+                    <i data-feather="menu"></i>
+                </button>
+                <div class="header-title-block">
+                    <h2 id="welcomeHeader">Dasbor Utama</h2>
+                    <p id="welcomeSubheader">Selamat datang! Pilih dokter untuk memulai.</p>
                 </div>
-                <div id="connectionStatusHeader" class="connection-status online">
-                    <i class="fas fa-circle"></i>
-                    <span id="statusTextHeader">Online</span>
+                <div class="user-info">
+                    <img id="userAvatar" class="user-avatar" src="" alt="Foto Pengguna">
+                    <button id="logoutBtnDesktop" class="logout-btn-desktop" title="Keluar" onclick="signOut()">
+                        <i data-feather="log-out"></i>
+                    </button>
                 </div>
             </header>
 
-            <!-- Content Wrapper -->
-            <div class="content-wrapper">
-                <!-- Doctor Selector Card -->
-                <div class="card doctor-selector-card">
-                    <div class="card-header">
-                        <div>
-                            <h3 class="card-title">
-                                <i class="fas fa-user-md"></i>
-                                Pilih Dokter
-                            </h3>
-                            <p class="card-subtitle">Pilih dokter untuk melihat dan mengelola transaksi</p>
-                        </div>
+            <!-- Placeholder for when no doctor is selected -->
+            <div id="noDoctorSelected" class="empty-state">
+                <i data-feather="users"></i>
+                <h3>Pilih atau Tambah Dokter</h3>
+                <p>Untuk melihat detail keuangan, silakan pilih dokter dari daftar di samping atau tambahkan dokter
+                    baru.</p>
+            </div>
+
+            <!-- Doctor-specific content (shown when a doctor is selected) -->
+            <div id="doctorInfo" style="display: none;">
+                <!-- Balance Statistics Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-card-title">Total Deposit Diterima</span>
+                        <span class="stat-card-value" id="totalDeposit">Rp 0</span>
                     </div>
-                    <div class="card-body">
-                        <div class="doctor-controls">
-                            <div class="doctor-select-wrapper">
-                                <select id="doctorSelect" class="doctor-select">
-                                    <option value="">Pilih Dokter</option>
-                                </select>
-                            </div>
-                            <div class="doctor-actions">
-                                <button class="btn btn-primary" onclick="showAddDoctorModal()">
-                                    <i class="fas fa-plus"></i>
-                                    Tambah Dokter
-                                </button>
-                                <button class="btn btn-danger btn-icon" onclick="showDeleteDoctorModal()"
-                                    id="deleteDoctorBtn" style="display: none;">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="stat-card">
+                        <span class="stat-card-title">Total Pengeluaran Dicatat</span>
+                        <span class="stat-card-value" id="totalExpense">Rp 0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-card-title">Sisa Saldo Saat Ini</span>
+                        <span class="stat-card-value" id="remainingBalance">Rp 0</span>
                     </div>
                 </div>
 
-                <!-- Statistics Cards -->
-                <div id="statsSection" class="stats-grid" style="display: none;">
-                    <div class="stat-card success">
-                        <div class="stat-header">
-                            <div class="stat-title">Total Deposit</div>
-                            <div class="stat-icon success">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" id="totalDepositStat">Rp 0</div>
-                        <div class="stat-change positive">
-                            <i class="fas fa-arrow-up"></i>
-                            Saldo tersedia
-                        </div>
-                    </div>
-
-                    <div class="stat-card danger">
-                        <div class="stat-header">
-                            <div class="stat-title">Total Pengeluaran</div>
-                            <div class="stat-icon danger">
-                                <i class="fas fa-credit-card"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" id="totalExpenseStat">Rp 0</div>
-                        <div class="stat-change negative">
-                            <i class="fas fa-arrow-down"></i>
-                            Total keluar
-                        </div>
-                    </div>
-
-                    <div class="stat-card primary">
-                        <div class="stat-header">
-                            <div class="stat-title">Sisa Saldo</div>
-                            <div class="stat-icon primary">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" id="remainingBalanceStat">Rp 0</div>
-                        <div class="stat-change" id="balanceChange">
-                            <i class="fas fa-minus"></i>
-                            Status saldo
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div id="quickActions" class="card quick-actions" style="display: none;">
-                    <div class="card-header">
-                        <div>
-                            <h3 class="card-title">
-                                <i class="fas fa-bolt"></i>
-                                Aksi Cepat
-                            </h3>
-                            <p class="card-subtitle">Lakukan transaksi dengan cepat dan mudah</p>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="flex gap-3 quick-actions-buttons">
-                            <button class="btn btn-success flex-1" onclick="showAddDepositModal()">
-                                <i class="fas fa-plus-circle"></i>
-                                <span class="btn-text">Tambah Deposit</span>
-                            </button>
-                            <button class="btn btn-primary flex-1" id="toggleExpenseBtn">
-                                <i class="fas fa-minus-circle"></i>
-                                <span class="btn-text">Tambah Pengeluaran</span>
-                            </button>
-                            <button class="btn btn-outline flex-1" onclick="showExportModal()">
-                                <i class="fas fa-file-pdf"></i>
-                                <span class="btn-text">Export PDF</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Expense Form -->
-                <div id="expenseForm" class="form-section" style="display: none;">
-                    <div class="form-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-receipt"></i>
-                            Tambah Pengeluaran
-                        </h3>
-                        <button class="btn btn-outline btn-sm" id="closeFormBtn">
-                            <i class="fas fa-times"></i>
-                            Tutup
-                        </button>
-                    </div>
-                    <div class="form-body">
-                        <form id="addExpenseForm">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        Tanggal
-                                    </label>
-                                    <input type="date" id="expenseDate" class="form-input" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="fas fa-edit"></i>
-                                        Keterangan
-                                    </label>
-                                    <input type="text" id="expenseDesc" class="form-input"
-                                        placeholder="Contoh: Beli makan siang" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                        Nominal (Rp)
-                                    </label>
-                                    <input type="text" id="expenseAmount" class="form-input" placeholder="50.000"
-                                        required oninput="formatAmountInput(this)">
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary flex-1">
-                                    <i class="fas fa-save"></i>
-                                    Simpan Pengeluaran
-                                </button>
-                                <button type="button" class="btn btn-outline" id="resetFormBtn">
-                                    <i class="fas fa-undo"></i>
-                                    Reset
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Transactions Table -->
-                <div id="transactionsSection" class="card table-card" style="display: none;">
-                    <div class="card-header">
-                        <div>
-                            <h3 class="card-title">
-                                <i class="fas fa-history"></i>
-                                Riwayat Transaksi
-                            </h3>
-                            <p class="card-subtitle">Daftar semua transaksi dan pengeluaran</p>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="transactionsTable">
-                            <div class="empty-state">
-                                <i class="fas fa-receipt"></i>
-                                <h3>Belum ada transaksi</h3>
-                                <p>Mulai dengan menambahkan deposit atau pengeluaran pertama</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- No Doctor Selected -->
-                <div id="noDoctorSelected" class="empty-state">
-                    <i class="fas fa-user-md"></i>
-                    <h3>Mulai dengan menambahkan dokter</h3>
-                    <p>Klik tombol "Tambah Dokter" di atas untuk memulai mengelola keuangan dokter</p>
-                    <button class="btn btn-primary mt-3" onclick="showAddDoctorModal()">
-                        <i class="fas fa-plus"></i>
-                        Tambah Dokter Pertama
+                <!-- Action Bar -->
+                <div class="actions-bar">
+                    <button class="btn btn-success" onclick="showAddDepositModal()">
+                        <i data-feather="arrow-down-circle"></i> Tambah Deposit
                     </button>
+                    <button class="btn btn-primary" id="addExpenseModalBtn" onclick="showAddExpenseModal()">
+                        <i data-feather="arrow-up-circle"></i> Tambah Pengeluaran
+                    </button>
+                    <button class="btn btn-outline" onclick="showExportModal()">
+                        <i data-feather="file-text"></i> Export Laporan
+                    </button>
+                </div>
+
+                <!-- Transactions Table Card -->
+                <div id="transactionsSection" class="transactions-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Riwayat Transaksi Keuangan</h3>
+                    </div>
+                    <div id="transactionsTable">
+                        <!-- Table or empty state for transactions will be rendered here by JavaScript -->
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Notification Toast -->
-    <div id="notification" class="notification">
-        <i class="fas fa-check-circle"></i>
-        <span id="notificationText"></span>
-    </div>
-
-    <!-- Modal Add Doctor -->
+    <!-- Modals -->
     <div id="addDoctorModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i class="fas fa-user-plus"></i>
-                    Tambah Dokter Baru
-                </h3>
+            <h3><i data-feather="user-plus"></i>Tambah Dokter Baru</h3>
+            <div class="form-group">
+                <label for="newDoctorName">Nama Lengkap Dokter</label>
+                <input type="text" id="newDoctorName" placeholder="Contoh: Dr. Ayu Lestari" oninput="checkDoctorName()">
+                <small id="nameHint" style="font-size: 0.8rem; display: none; margin-top: 5px;"></small>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Nama Dokter</label>
-                    <input type="text" id="newDoctorName" class="form-input" placeholder="Dr. Benita"
-                        oninput="checkDoctorName()">
-                    <small id="nameHint" style="color: var(--text-secondary); font-size: 0.875rem; display: none;">Tips:
-                        Gunakan nama yang unik dan mudah diingat</small>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Deposit Awal (Rp)</label>
-                    <input type="text" id="initialDeposit" class="form-input" placeholder="500.000"
-                        oninput="formatAmountInput(this)">
-                </div>
+            <div class="form-group">
+                <label for="initialDeposit">Deposit Awal (Opsional)</label>
+                <input type="text" id="initialDeposit" placeholder="Contoh: 500.000" oninput="formatAmountInput(this)">
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="addDoctor()">
-                    <i class="fas fa-save"></i>
-                    Tambah Dokter
-                </button>
-                <button class="btn btn-outline" onclick="closeModal('addDoctorModal')">
-                    <i class="fas fa-times"></i>
-                    Batal
-                </button>
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closeModal('addDoctorModal')">Batal</button>
+                <button class="btn btn-primary" onclick="addDoctor()">Simpan Dokter</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Add Deposit -->
     <div id="addDepositModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i class="fas fa-wallet"></i>
-                    Tambah Deposit
-                </h3>
+            <h3><i data-feather="dollar-sign"></i>Tambah Dana Deposit</h3>
+            <div class="form-group">
+                <label for="depositDesc">Keterangan Deposit</label>
+                <input type="text" id="depositDesc" placeholder="Contoh: Deposit rutin bulanan">
             </div>
-            <div class="modal-body">
+            <div class="form-group">
+                <label for="additionalDeposit">Jumlah Deposit (Rp)</label>
+                <input type="text" id="additionalDeposit" placeholder="Contoh: 200.000"
+                    oninput="formatAmountInput(this)">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closeModal('addDepositModal')">Batal</button>
+                <button class="btn btn-success" onclick="addDeposit()">Tambah Deposit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div id="addExpenseModal" class="modal">
+        <div class="modal-content">
+            <h3><i data-feather="minus-circle"></i>Tambah Pengeluaran Baru</h3>
+            <form id="addExpenseForm">
                 <div class="form-group">
-                    <label class="form-label">Keterangan Deposit</label>
-                    <input type="text" id="depositDesc" class="form-input"
-                        placeholder="Contoh: Deposit tambahan dari dokter">
+                    <label for="expenseDateModal">Tanggal Pengeluaran</label>
+                    <input type="date" id="expenseDateModal" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Jumlah Deposit (Rp)</label>
-                    <input type="text" id="additionalDeposit" class="form-input" placeholder="200.000"
+                    <label for="expenseDescModal">Keterangan</label>
+                    <input type="text" id="expenseDescModal" placeholder="Contoh: Pembelian alat tulis" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseAmountModal">Nominal (Rp)</label>
+                    <input type="text" id="expenseAmountModal" placeholder="Contoh: 50.000" required
                         oninput="formatAmountInput(this)">
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" onclick="addDeposit()">
-                    <i class="fas fa-plus-circle"></i>
-                    Tambah Deposit
-                </button>
-                <button class="btn btn-outline" onclick="closeModal('addDepositModal')">
-                    <i class="fas fa-times"></i>
-                    Batal
-                </button>
-            </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('addExpenseModal')">Batal</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i data-feather="plus"></i> Simpan Pengeluaran
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Modal Confirm Delete Transaction -->
+    <!-- Edit Transaction Modal -->
+    <div id="editTransactionModal" class="modal">
+        <div class="modal-content">
+            <h3><i data-feather="edit"></i>Edit Transaksi</h3>
+            <form id="editTransactionForm">
+                <input type="hidden" id="editTransactionId">
+                <div class="form-group">
+                    <label for="editTransactionType">Jenis Transaksi</label>
+                    <select id="editTransactionType" class="form-group input" disabled>
+                        <option value="expense">Pengeluaran</option>
+                        <option value="income">Pemasukan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editTransactionDate">Tanggal</label>
+                    <input type="date" id="editTransactionDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTransactionDesc">Keterangan</label>
+                    <input type="text" id="editTransactionDesc" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTransactionAmount">Nominal (Rp)</label>
+                    <input type="text" id="editTransactionAmount" required oninput="formatAmountInput(this)">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-outline"
+                        onclick="closeModal('editTransactionModal')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="confirmDeleteModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Hapus Transaksi
-                </h3>
-            </div>
-            <div class="modal-body">
-                <p>Yakin ingin menghapus transaksi ini? Tindakan ini tidak dapat dibatalkan.</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger" onclick="confirmDelete()">
-                    <i class="fas fa-trash"></i>
-                    Hapus
-                </button>
-                <button class="btn btn-outline" onclick="closeModal('confirmDeleteModal')">
-                    <i class="fas fa-times"></i>
-                    Batal
-                </button>
+            <h3><i data-feather="alert-triangle" style="color: var(--red);"></i>Konfirmasi Hapus Transaksi</h3>
+            <p>Anda yakin ingin menghapus transaksi ini secara permanen? Tindakan ini tidak dapat diurungkan.</p>
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closeModal('confirmDeleteModal')">Batal</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">Ya, Hapus Transaksi</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Confirm Delete Doctor -->
     <div id="confirmDeleteDoctorModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Hapus Dokter
-                </h3>
+            <h3><i data-feather="alert-triangle" style="color: var(--red);"></i>Konfirmasi Hapus Dokter</h3>
+            <p id="deleteDoctorText">Yakin ingin menghapus dokter ini beserta semua data transaksinya? Tindakan ini
+                tidak dapat diurungkan.</p>
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closeModal('confirmDeleteDoctorModal')">Batal</button>
+                <button class="btn btn-danger" onclick="confirmDeleteDoctor()">Ya, Hapus Dokter</button>
             </div>
-            <div class="modal-body">
-                <p id="deleteDoctorText">Yakin ingin menghapus dokter ini beserta semua data transaksinya? Tindakan ini
-                    tidak dapat dibatalkan.</p>
+        </div>
+    </div>
+
+    <div id="exportPDFModal" class="modal">
+        <div class="modal-content">
+            <h3><i data-feather="settings"></i>Pengaturan Export Laporan PDF</h3>
+            <div class="form-group">
+                <label for="exportType">Pilih Data untuk Diexport:</label>
+                <select id="exportType" class="form-group input"> <!-- Ensure class is applied -->
+                    <option value="all">Semua Transaksi Dokter Ini</option>
+                    <option value="range">Transaksi Berdasarkan Rentang Tanggal</option>
+                </select>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger" onclick="confirmDeleteDoctor()">
-                    <i class="fas fa-trash"></i>
-                    Hapus Dokter
-                </button>
-                <button class="btn btn-outline" onclick="closeModal('confirmDeleteDoctorModal')">
-                    <i class="fas fa-times"></i>
-                    Batal
+            <div id="dateRangeGroup" style="display: none;">
+                <div class="form-group">
+                    <label for="exportFromDate">Dari Tanggal:</label>
+                    <input type="date" id="exportFromDate" class="form-group input">
+                </div>
+                <div class="form-group">
+                    <label for="exportToDate">Sampai Tanggal:</label>
+                    <input type="date" id="exportToDate" class="form-group input">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="exportSort">Urutkan Berdasarkan:</label>
+                <select id="exportSort" class="form-group input">
+                    <option value="newest">Transaksi Terbaru Dulu</option>
+                    <option value="oldest">Transaksi Terlama Dulu</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="closeModal('exportPDFModal')">Batal</button>
+                <button class="btn btn-primary" onclick="processExportToPDF()">
+                    <i data-feather="download"></i> Export ke PDF
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Export PDF -->
-    <div id="exportPDFModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i class="fas fa-file-pdf"></i>
-                    Export Laporan PDF
-                </h3>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Pilih Data Export:</label>
-                    <select id="exportType" class="form-input">
-                        <option value="all">Semua Transaksi</option>
-                        <option value="range">Berdasarkan Tanggal</option>
-                    </select>
-                </div>
-                <div id="dateRangeGroup" style="display: none;">
-                    <div class="form-group">
-                        <label class="form-label">Dari Tanggal:</label>
-                        <input type="date" id="exportFromDate" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Sampai Tanggal:</label>
-                        <input type="date" id="exportToDate" class="form-input">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Urutan:</label>
-                    <select id="exportSort" class="form-input">
-                        <option value="newest">Terbaru Dulu</option>
-                        <option value="oldest">Terlama Dulu</option>
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="processExportToPDF()">
-                    <i class="fas fa-download"></i>
-                    Export PDF
-                </button>
-                <button class="btn btn-outline" onclick="closeModal('exportPDFModal')">
-                    <i class="fas fa-times"></i>
-                    Batal
-                </button>
-            </div>
-        </div>
+    <!-- Notification Toast -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Connection Status Indicator -->
+    <div id="connectionStatus" class="connection-status online">
+        <i data-feather="wifi" style="width: 16px; height: 16px;"></i>
+        <span id="statusText">Online</span>
     </div>
 
     <script>
+        // ===================================================================================
+        // JAVASCRIPT LOGIC
+        // ===================================================================================
+
         // ===== FIREBASE CONFIGURATION =====
         let firebaseAvailable = false;
         let auth, db;
+        // Flag to ensure initial auto-sign-in logic runs only once
+        let initialAuthAttempted = false;
+
 
         function initializeFirebase() {
             if (typeof firebase !== 'undefined') {
                 console.log('✅ Firebase SDK loaded successfully');
                 firebaseAvailable = true;
 
-                // TODO: Ganti dengan config Firebase Anda
-                const firebaseConfig = {
-                    apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
-                    authDomain: "wmproject-9269a.firebaseapp.com",
-                    projectId: "wmproject-9269a",
-                    storageBucket: "wmproject-9269a.firebasestorage.app",
-                    messagingSenderId: "706043186227",
-                    appId: "1:706043186227:web:470bfa89aa78c68829e746",
-                    measurementId: "G-FW9JLPDVJS"
-                };
+                let effectiveFirebaseConfig;
+
+                // Try to use Canvas-provided config first
+                if (typeof __firebase_config !== 'undefined') {
+                    try {
+                        effectiveFirebaseConfig = JSON.parse(__firebase_config);
+                        console.log('🔧 Using Firebase config provided by Canvas environment.');
+                    } catch (e) {
+                        console.error('Error parsing __firebase_config. Falling back to manual config.', e);
+                        // Fallback to user's hardcoded config if __firebase_config is malformed
+                        effectiveFirebaseConfig = {
+                            apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
+                            authDomain: "wmproject-9269a.firebaseapp.com",
+                            projectId: "wmproject-9269a",
+                            storageBucket: "wmproject-9269a.appspot.com", // Corrected from firebasestorage.app based on typical user config
+                            messagingSenderId: "706043186227",
+                            appId: "1:706043186227:web:470bfa89aa78c68829e746",
+                            measurementId: "G-FW9JLPDVJS"
+                        };
+                        console.warn('🔧 Using manual Firebase config as fallback due to __firebase_config parse error.');
+                    }
+                } else {
+                    // Fallback to user's hardcoded config if __firebase_config is not defined
+                    effectiveFirebaseConfig = {
+                        apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
+                        authDomain: "wmproject-9269a.firebaseapp.com",
+                        projectId: "wmproject-9269a",
+                        storageBucket: "wmproject-9269a.appspot.com", // Corrected from firebasestorage.app
+                        messagingSenderId: "706043186227",
+                        appId: "1:706043186227:web:470bfa89aa78c68829e746",
+                        measurementId: "G-FW9JLPDVJS"
+                    };
+                    console.warn('🔧 __firebase_config not found. Using manual Firebase config. Custom token auth might fail if this project differs from Canvas environment.');
+                }
+
 
                 try {
-                    firebase.initializeApp(firebaseConfig);
+                    firebase.initializeApp(effectiveFirebaseConfig);
                     auth = firebase.auth();
                     db = firebase.firestore();
                     db.enablePersistence().catch((err) => {
-                        console.log('Offline persistence error:', err.code);
+                        if (err.code == 'failed-precondition') {
+                            console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+                        } else if (err.code == 'unimplemented') {
+                            console.warn('The current browser does not support all of the features required to enable persistence.');
+                        } else {
+                            console.log('Offline persistence error:', err.code);
+                        }
                     });
-                    console.log('🔥 Firebase initialized successfully');
+                    console.log('🔥 Firebase initialized successfully with project ID:', effectiveFirebaseConfig.projectId);
                 } catch (error) {
                     console.error('Firebase initialization error:', error);
                     firebaseAvailable = false;
@@ -2014,49 +1363,38 @@
         let doctors = [];
         let currentDoctorId = null;
         let deleteTransactionId = null;
+        let currentEditingTransactionId = null; // For editing transactions
         let isOnline = navigator.onLine;
 
-        // ===== CONNECTION STATUS =====
+        // ===== CONNECTION STATUS UI =====
         function updateConnectionStatus() {
-            const statusElements = [
-                document.getElementById('connectionStatus'),
-                document.getElementById('connectionStatusHeader')
-            ];
-            const statusTexts = [
-                document.getElementById('statusText'),
-                document.getElementById('statusTextHeader')
-            ];
+            const statusEl = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('statusText');
+            const statusIcon = statusEl.querySelector('i');
 
-            statusElements.forEach((el, index) => {
-                if (!el) return;
-
-                if (!navigator.onLine) {
-                    el.className = 'connection-status offline';
-                    if (statusTexts[index]) statusTexts[index].textContent = 'Offline';
-                    isOnline = false;
-                } else {
-                    el.className = 'connection-status online';
-                    if (statusTexts[index]) statusTexts[index].textContent = 'Online';
-                    isOnline = true;
-                }
-            });
+            if (!navigator.onLine) {
+                statusEl.className = 'connection-status offline';
+                statusText.textContent = 'Offline';
+                isOnline = false;
+                if (statusIcon) statusIcon.setAttribute('data-feather', 'wifi-off');
+            } else {
+                statusEl.className = 'connection-status online';
+                statusText.textContent = 'Online';
+                isOnline = true;
+                if (statusIcon) statusIcon.setAttribute('data-feather', 'wifi');
+            }
+            if (typeof feather !== 'undefined') feather.replace();
         }
 
         function showSyncStatus() {
-            const statusElements = [
-                document.getElementById('connectionStatus'),
-                document.getElementById('connectionStatusHeader')
-            ];
-            const statusTexts = [
-                document.getElementById('statusText'),
-                document.getElementById('statusTextHeader')
-            ];
+            const statusEl = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('statusText');
+            const statusIcon = statusEl.querySelector('i');
 
-            statusElements.forEach((el, index) => {
-                if (!el) return;
-                el.className = 'connection-status syncing';
-                if (statusTexts[index]) statusTexts[index].textContent = 'Sinkronisasi...';
-            });
+            statusEl.className = 'connection-status syncing';
+            statusText.textContent = 'Sinkronisasi...';
+            if (statusIcon) statusIcon.setAttribute('data-feather', 'refresh-cw');
+            if (typeof feather !== 'undefined') feather.replace();
 
             setTimeout(() => {
                 updateConnectionStatus();
@@ -2066,69 +1404,72 @@
         window.addEventListener('online', updateConnectionStatus);
         window.addEventListener('offline', updateConnectionStatus);
 
-        // ===== AUTHENTICATION =====
-        function initAuth() {
-            if (!firebaseAvailable) {
-                console.log('🔧 Firebase not available - Starting in Development Mode');
+        // ===== AUTHENTICATION LOGIC =====
+        async function initAuth() {
+            // Check if firebase is available and the config is not the placeholder
+            if (!firebaseAvailable || (auth && auth.app.options.apiKey === "YOUR_API_KEY")) { // Ensure YOUR_API_KEY matches the placeholder
+                console.warn("Firebase not fully available or using placeholder API key. Bypassing to dev mode.");
                 bypassLoginForDevelopment();
+                hideLoadingScreen();
                 return;
             }
 
-            if (auth.app.options.apiKey === "your-api-key-here") {
-                console.log('🔧 Firebase config not set - Starting in Development Mode');
-                bypassLoginForDevelopment();
-                return;
-            }
 
-            try {
-                auth.getRedirectResult().then((result) => {
-                    if (result.user) {
-                        console.log('Redirect login successful:', result.user.email);
-                        showNotification('Login berhasil! Selamat datang ' + (result.user.displayName || result.user.email), 'success');
-                    }
-                }).catch((error) => {
-                    console.error('Redirect login error:', error);
-                    if (error.code !== 'auth/cancelled-popup-request') {
-                        showNotification('Login gagal: ' + error.message, 'error');
-                    }
-                });
+            auth.onAuthStateChanged(async (user) => {
+                console.log('Auth state changed. User:', user ? user.uid : null, 'Is Anonymous:', user ? user.isAnonymous : 'N/A');
 
-                auth.onAuthStateChanged((user) => {
-                    console.log('Auth state changed:', user ? user.email : 'No user');
-
-                    if (user) {
-                        currentUser = user;
-                        showMainApp();
-                        loadUserData();
+                if (user) {
+                    currentUser = user;
+                    initialAuthAttempted = true;
+                    showMainApp();
+                    await loadUserData();
+                    hideLoadingScreen();
+                } else {
+                    if (!initialAuthAttempted) {
+                        initialAuthAttempted = true;
+                        try {
+                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token && __initial_auth_token.trim() !== "") {
+                                console.log('Attempting sign-in with custom token...');
+                                await auth.signInWithCustomToken(__initial_auth_token);
+                                console.log('Custom token sign-in initiated. onAuthStateChanged will handle the new user state.');
+                            } else {
+                                console.log('No custom token found, attempting anonymous sign-in...');
+                                await auth.signInAnonymously();
+                                console.log('Anonymous sign-in initiated. onAuthStateChanged will handle the new user state.');
+                            }
+                        } catch (error) {
+                            console.error('Error during initial auto-sign-in (custom/anonymous):', error);
+                            if (error.code === 'auth/custom-token-mismatch') {
+                                showNotification('Gagal memulai sesi otomatis: Token tidak cocok dengan proyek Firebase yang dikonfigurasi. Silakan periksa konfigurasi Firebase Anda atau coba login manual.', 'error');
+                            } else {
+                                showNotification('Gagal memulai sesi otomatis. Beberapa fitur mungkin tidak berfungsi normal.', 'error');
+                            }
+                            currentUser = null;
+                            showLoginScreen();
+                            hideLoadingScreen();
+                        }
                     } else {
+                        console.log('User signed out or no user after initial auth attempts.');
                         currentUser = null;
                         showLoginScreen();
+                        hideLoadingScreen();
                     }
-
-                    hideLoadingScreen();
-                });
-            } catch (error) {
-                console.error('Firebase auth error:', error);
-                console.log('🔧 Falling back to Development Mode');
-                bypassLoginForDevelopment();
-            }
+                }
+            });
         }
 
         function bypassLoginForDevelopment() {
             console.log('🔧 DEVELOPMENT MODE: Bypassing Firebase login');
-
             currentUser = {
                 uid: 'dev-user-123',
-                email: 'developer@test.com',
+                email: 'developer@example.com',
                 displayName: 'Developer Mode',
-                photoURL: 'https://via.placeholder.com/40/6366f1/ffffff?text=DEV'
+                photoURL: `https://ui-avatars.com/api/?name=Dev&background=4f46e5&color=fff&bold=true`
             };
-
             doctors = [];
             showMainApp();
-            hideLoadingScreen();
             loadDoctors();
-            showNotification('Development Mode: Mulai dengan data kosong', 'info');
+            showNotification('🔧 Mode Development Aktif. Data tidak disimpan ke Firebase.', 'info');
         }
 
         function showLoginScreen() {
@@ -2139,11 +1480,9 @@
         function showMainApp() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'flex';
-
             if (currentUser) {
-                document.getElementById('userAvatar').src = currentUser.photoURL || '';
-                document.getElementById('userName').textContent = currentUser.displayName || 'User';
-                document.getElementById('userEmail').textContent = currentUser.email || '';
+                document.getElementById('userAvatar').src = currentUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.displayName || currentUser.email || 'User')}&background=e2e8f0&color=1e293b&bold=true`;
+                document.getElementById('userAvatar').alt = currentUser.displayName || currentUser.email || 'User Avatar';
             }
         }
 
@@ -2151,197 +1490,143 @@
             document.getElementById('loadingScreen').style.display = 'none';
         }
 
-        let isSigningIn = false;
-
         async function signInWithGoogle() {
             if (!firebaseAvailable || !auth) {
-                showNotification('Firebase not configured. App running in development mode.', 'error');
+                showNotification('❌ Konfigurasi Firebase tidak ditemukan.', 'error');
                 return;
             }
-
-            if (isSigningIn) {
-                console.log('Login already in progress...');
-                return;
-            }
-
             try {
-                isSigningIn = true;
-
-                const loginBtn = document.getElementById('googleLoginBtn');
-                loginBtn.disabled = true;
-                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sedang masuk...';
-
-                await auth.signOut().catch(() => { });
-
                 const provider = new firebase.auth.GoogleAuthProvider();
-                provider.addScope('email');
-                provider.addScope('profile');
-                provider.setCustomParameters({
-                    prompt: 'select_account'
-                });
-
-                console.log('Starting Google sign-in...');
                 const result = await auth.signInWithPopup(provider);
-
-                console.log('Login successful:', result.user.email);
-                showNotification('Login berhasil! Selamat datang ' + (result.user.displayName || result.user.email), 'success');
-
+                showNotification(`✅ Login Google berhasil! Selamat datang, ${result.user.displayName || result.user.email}!`, 'success');
             } catch (error) {
-                console.error('Login error:', error);
-
-                if (error.code === 'auth/cancelled-popup-request') {
-                    showNotification('Login dibatalkan. Silakan coba lagi.', 'info');
-                } else if (error.code === 'auth/popup-blocked') {
-                    showNotification('Popup diblokir browser. Izinkan popup untuk login.', 'error');
-                    try {
-                        const provider = new firebase.auth.GoogleAuthProvider();
-                        await auth.signInWithRedirect(provider);
-                    } catch (redirectError) {
-                        console.error('Redirect login also failed:', redirectError);
-                    }
+                console.error('Google Login error:', error);
+                if (error.code === 'auth/operation-not-supported-in-this-environment') {
+                    showNotification('❌ Login Google via popup tidak didukung di lingkungan ini. Coba buka aplikasi di tab browser biasa atau pastikan web storage aktif.', 'error');
                 } else if (error.code === 'auth/popup-closed-by-user') {
-                    showNotification('Login dibatalkan oleh user.', 'info');
-                } else {
-                    showNotification('Login gagal: ' + (error.message || 'Terjadi kesalahan'), 'error');
+                    showNotification('ℹ️ Proses login Google dibatalkan oleh pengguna.', 'info');
+                } else if (error.code === 'auth/cancelled-popup-request') {
+                    showNotification('ℹ️ Permintaan login Google sebelumnya masih aktif atau dibatalkan. Silakan coba lagi.', 'info');
                 }
-            } finally {
-                isSigningIn = false;
-                const loginBtn = document.getElementById('googleLoginBtn');
-                if (loginBtn) {
-                    loginBtn.disabled = false;
-                    loginBtn.innerHTML = '<div class="google-icon">G</div>Masuk dengan Google';
+                else {
+                    showNotification('❌ Login Google gagal: ' + error.message, 'error');
                 }
             }
         }
 
         async function signOut() {
-            if (!firebaseAvailable || !auth) {
+            if (!firebaseAvailable || !auth || (currentUser && currentUser.uid === 'dev-user-123')) {
                 currentUser = null;
+                initialAuthAttempted = false;
                 showLoginScreen();
-                showNotification('Keluar dari development mode', 'info');
+                showNotification('ℹ️ Anda telah keluar dari mode development.', 'info');
                 return;
             }
-
             try {
                 await auth.signOut();
-                showNotification('Anda telah keluar dari aplikasi', 'info');
+                showNotification('ℹ️ Anda telah berhasil keluar.', 'info');
+                currentDoctorId = null;
+                doctors = [];
+                loadDoctors();
+                selectDoctor(null);
+                initialAuthAttempted = false;
             } catch (error) {
-                console.error('Logout error:', error);
-                showNotification('Logout gagal: ' + error.message, 'error');
+                showNotification('❌ Gagal keluar: ' + error.message, 'error');
             }
         }
 
         // ===== FIRESTORE DATA OPERATIONS =====
         async function loadUserData() {
-            if (!currentUser) return;
+            if (!currentUser) {
+                console.warn("loadUserData called with no currentUser.");
+                selectDoctor(null);
+                return;
+            }
+            if (!firebaseAvailable && currentUser.uid === 'dev-user-123') {
+                console.log('🔧 Dev mode: Using in-memory data for doctors.');
+                loadDoctors();
+                if (doctors.length > 0) {
+                    selectDoctor(doctors[0].id);
+                } else {
+                    selectDoctor(null);
+                }
+                return;
+            }
 
-            if (!firebaseAvailable || currentUser.uid === 'dev-user-123') {
-                console.log('🔧 Development mode: Using mock data');
+            if (!db) {
+                console.error("Firestore database instance (db) is not available.");
+                showNotification("❌ Database tidak tersedia. Tidak dapat memuat data.", "error");
                 return;
             }
 
             try {
                 showSyncStatus();
-                console.log('Loading data for user:', currentUser.uid);
-
                 const userDocRef = db.collection('users').doc(currentUser.uid);
                 const docSnapshot = await userDocRef.get();
-
                 if (docSnapshot.exists) {
-                    const userData = docSnapshot.data();
-                    doctors = userData.doctors || [];
-                    console.log('Loaded doctors:', doctors.length);
+                    doctors = docSnapshot.data().doctors || [];
                 } else {
                     doctors = [];
-                    console.log('New user - starting with clean slate');
-                    showNotification('Selamat datang! Mulai dengan menambahkan dokter pertama Anda', 'success');
+                    if (!currentUser.isAnonymous) {
+                        showNotification('🎉 Selamat datang! Silakan tambahkan dokter pertama Anda.', 'success');
+                    } else {
+                        console.log("New anonymous session, no existing data.");
+                    }
                 }
-
                 loadDoctors();
-
                 if (doctors.length > 0) {
                     selectDoctor(doctors[0].id);
-                    document.getElementById('doctorSelect').value = doctors[0].id;
+                } else {
+                    selectDoctor(null);
                 }
-
             } catch (error) {
-                console.error('Error loading user data:', error);
-                showNotification('Gagal memuat data: ' + error.message, 'error');
-
+                console.error('Error loading user data from Firestore:', error);
+                showNotification('❌ Gagal memuat data pengguna dari cloud: ' + error.message, 'error');
                 doctors = [];
                 loadDoctors();
-                showNotification('Gagal memuat data, mulai dengan data kosong', 'info');
+                selectDoctor(null);
             }
         }
 
         async function saveUserData() {
-            if (!currentUser) return;
-
-            if (!firebaseAvailable || currentUser.uid === 'dev-user-123') {
-                console.log('🔧 Development mode: Skipping Firebase save');
+            if (!currentUser || (!firebaseAvailable && currentUser.uid === 'dev-user-123')) {
+                console.log('🔧 Dev mode or no user: Skipping Firebase save.');
                 return;
             }
-
+            if (!db) {
+                console.error("Firestore database instance (db) is not available for saving.");
+                showNotification("❌ Database tidak tersedia. Tidak dapat menyimpan data.", "error");
+                return;
+            }
             try {
                 showSyncStatus();
-                console.log('Saving data for user:', currentUser.uid);
-
                 const userDocRef = db.collection('users').doc(currentUser.uid);
-
                 const now = new Date();
                 doctors.forEach(doctor => {
-                    doctor.updatedAt = now;
+                    doctor.updatedAt = now.toISOString();
                     if (!doctor.createdAt) {
-                        doctor.createdAt = now;
+                        doctor.createdAt = now.toISOString();
                     }
                 });
-
-                await userDocRef.set({
-                    doctors: doctors,
-                    lastUpdated: now,
-                    email: currentUser.email,
-                    displayName: currentUser.displayName
-                }, { merge: true });
-
-                console.log('Data saved successfully');
-
+                await userDocRef.set({ doctors: doctors, lastUpdated: now.toISOString() }, { merge: true });
+                console.log('Data saved successfully to Firebase.');
             } catch (error) {
-                console.error('Error saving data:', error);
-                showNotification('Data disimpan offline, akan sinkronisasi saat online', 'info');
+                console.error('Error saving data to Firebase:', error);
+                showNotification('⚠️ Gagal menyimpan data ke cloud. Data disimpan lokal dan akan disinkronkan saat online.', 'info');
             }
         }
 
-        // ===== UTILITY FUNCTIONS =====
+        // ===== UI UTILITY FUNCTIONS =====
         function showNotification(message, type) {
             const notification = document.getElementById('notification');
-            const notificationText = document.getElementById('notificationText');
-
-            // Set icon based on type
-            const iconClass = {
-                'success': 'fas fa-check-circle',
-                'error': 'fas fa-exclamation-circle',
-                'info': 'fas fa-info-circle'
-            }[type] || 'fas fa-info-circle';
-
-            notification.innerHTML = `<i class="${iconClass}"></i><span>${message}</span>`;
+            notification.textContent = message;
             notification.className = 'notification ' + type;
-
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 100);
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 4000);
+            notification.classList.add('show');
+            setTimeout(() => { notification.classList.remove('show'); }, 4000);
         }
 
         function formatCurrency(amount) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
         }
 
         function formatNumber(num) {
@@ -2349,293 +1634,224 @@
         }
 
         function unformatNumber(str) {
-            return parseInt(str.replace(/\./g, '').replace(/,/g, '')) || 0;
+            return parseInt(String(str).replace(/\./g, '').replace(/,/g, '')) || 0;
+        }
+
+        function formatAmountInput(inputElement) {
+            let value = inputElement.value;
+            let unformattedValue = value.replace(/\D/g, '');
+
+            if (unformattedValue) {
+                let numberValue = parseInt(unformattedValue, 10);
+                inputElement.value = formatNumber(numberValue);
+            } else {
+                inputElement.value = '';
+            }
         }
 
         function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('id-ID');
+            if (!dateString) return 'N/A';
+            try {
+                // Ensure the date string is in a format that Date constructor can parse reliably, e.g., YYYY-MM-DD
+                const parts = dateString.split('-');
+                if (parts.length === 3) {
+                    // Assuming YYYY-MM-DD or similar that Date can parse
+                    return new Date(dateString).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                }
+                // If not in expected format, try parsing directly (might be less reliable)
+                return new Date(dateString).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            } catch (e) {
+                console.warn("Error formatting date:", dateString, e);
+                return dateString;
+            }
         }
 
-        function setTodayDate() {
-            const today = new Date();
-            const dateString = today.getFullYear() + '-' +
-                String(today.getMonth() + 1).padStart(2, '0') + '-' +
-                String(today.getDate()).padStart(2, '0');
-            document.getElementById('expenseDate').value = dateString;
+        function setTodayDate(elementId) {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById(elementId);
+            if (dateInput) dateInput.value = today;
         }
 
-        // ===== DOCTOR MANAGEMENT =====
+        // ===== DOCTOR MANAGEMENT (ADAPTED FOR NEW UI) =====
         function loadDoctors() {
-            const select = document.getElementById('doctorSelect');
-            select.innerHTML = '<option value="">Pilih Dokter</option>';
+            const listElement = document.getElementById('doctorList');
+            listElement.innerHTML = '';
+
+            if (doctors.length === 0) {
+                listElement.innerHTML = `
+                    <li class="doctor-list-empty-state">
+                        <i data-feather="users"></i>
+                        <span>Belum ada dokter terdaftar.<br>Silakan tambahkan dokter baru.</span>
+                    </li>`;
+                if (typeof feather !== 'undefined') feather.replace();
+                return;
+            }
 
             doctors.forEach(doctor => {
-                const option = document.createElement('option');
-                option.value = doctor.id;
-                option.textContent = doctor.name;
-                select.appendChild(option);
+                const li = document.createElement('li');
+                li.setAttribute('data-id', doctor.id);
+                li.onclick = () => {
+                    selectDoctor(doctor.id);
+                    closeDrawer(); // Close drawer after selecting a doctor on mobile
+                }
+                li.innerHTML = `<i data-feather="user"></i> <span class="doctor-name-sidebar">${doctor.name}</span>`;
+                listElement.appendChild(li);
             });
+            if (typeof feather !== 'undefined') feather.replace();
         }
 
         function selectDoctor(doctorId) {
             currentDoctorId = doctorId;
             const doctor = doctors.find(d => d.id == doctorId);
+            const deleteDoctorButton = document.getElementById('deleteDoctorBtn');
+
+            document.querySelectorAll('#doctorList li').forEach(li => {
+                li.classList.toggle('active', li.getAttribute('data-id') == doctorId);
+            });
+
+            const doctorInfoSection = document.getElementById('doctorInfo');
+            const noDoctorSelectedSection = document.getElementById('noDoctorSelected');
+            const welcomeHeader = document.getElementById('welcomeHeader');
+            const welcomeSubheader = document.getElementById('welcomeSubheader');
 
             if (doctor) {
-                updateDoctorInfo(doctor);
-                document.getElementById('statsSection').style.display = 'grid';
-                document.getElementById('quickActions').style.display = 'block';
-                document.getElementById('transactionsSection').style.display = 'block';
-                document.getElementById('noDoctorSelected').style.display = 'none';
-                document.getElementById('deleteDoctorBtn').style.display = 'inline-flex';
+                welcomeHeader.textContent = `Dasbor Dr. ${doctor.name}`;
+                welcomeSubheader.textContent = `Kelola data keuangan untuk Dr. ${doctor.name}.`;
 
-                document.getElementById('expenseForm').style.display = 'none';
-                document.getElementById('toggleExpenseBtn').innerHTML = '<i class="fas fa-minus-circle"></i><span class="btn-text"> Tambah Pengeluaran</span>';
+                updateDoctorInfoUI(doctor);
+                doctorInfoSection.style.display = 'block';
+                noDoctorSelectedSection.style.display = 'none';
+                if (deleteDoctorButton) deleteDoctorButton.style.display = 'inline-flex';
 
-                setTodayDate();
+                setTodayDate('expenseDateModal'); // Set default date for new expense modal
             } else {
-                document.getElementById('statsSection').style.display = 'none';
-                document.getElementById('quickActions').style.display = 'none';
-                document.getElementById('expenseForm').style.display = 'none';
-                document.getElementById('transactionsSection').style.display = 'none';
-                document.getElementById('noDoctorSelected').style.display = 'block';
-                document.getElementById('deleteDoctorBtn').style.display = 'none';
+                currentDoctorId = null;
+                doctorInfoSection.style.display = 'none';
+                noDoctorSelectedSection.style.display = 'block';
+                welcomeHeader.textContent = 'Dasbor Utama';
+                welcomeSubheader.textContent = 'Selamat datang! Pilih dokter untuk memulai.';
+                if (deleteDoctorButton) deleteDoctorButton.style.display = 'none';
             }
         }
 
-        function updateDoctorInfo(doctor) {
-            const totalExpense = doctor.transactions.filter(t =>
-                t.type === 'expense' || !t.type
-            ).reduce((sum, t) => sum + t.amount, 0);
+        function updateDoctorInfoUI(doctor) {
+            const totalExpense = doctor.transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
 
-            const totalIncome = doctor.transactions.filter(t =>
-                t.type === 'income'
-            ).reduce((sum, t) => sum + t.amount, 0);
+            const totalIncome = doctor.transactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
 
             doctor.totalDeposit = totalIncome;
             const remainingBalance = doctor.totalDeposit - totalExpense;
 
-            // Update statistics cards
-            document.getElementById('totalDepositStat').textContent = formatCurrency(doctor.totalDeposit);
-            document.getElementById('totalExpenseStat').textContent = formatCurrency(totalExpense);
-            document.getElementById('remainingBalanceStat').textContent = formatCurrency(remainingBalance);
-
-            // Update balance status
-            const balanceChangeEl = document.getElementById('balanceChange');
-            const remainingBalanceEl = document.getElementById('remainingBalanceStat');
-
-            if (remainingBalance < 0) {
-                remainingBalanceEl.classList.add('negative');
-                balanceChangeEl.className = 'stat-change negative';
-                balanceChangeEl.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Saldo minus';
-            } else {
-                remainingBalanceEl.classList.remove('negative');
-                balanceChangeEl.className = 'stat-change positive';
-                balanceChangeEl.innerHTML = '<i class="fas fa-check-circle"></i> Saldo aman';
-            }
+            document.getElementById('totalDeposit').textContent = formatCurrency(doctor.totalDeposit);
+            document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
+            const remainingBalanceEl = document.getElementById('remainingBalance');
+            remainingBalanceEl.textContent = formatCurrency(remainingBalance);
+            remainingBalanceEl.className = 'stat-card-value';
+            remainingBalanceEl.classList.add(remainingBalance < 0 ? 'negative' : 'positive');
 
             renderTransactions(doctor.transactions);
         }
 
+        // ===== TRANSACTIONS RENDER (ADAPTED FOR NEW UI) =====
         function renderTransactions(transactions) {
             const container = document.getElementById('transactionsTable');
-
-            if (transactions.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-receipt"></i>
-                        <h3>Belum ada transaksi</h3>
-                        <p>Mulai dengan menambahkan deposit atau pengeluaran pertama</p>
-                    </div>
-                `;
+            if (!transactions || transactions.length === 0) {
+                container.innerHTML = `<div class="empty-state" style="padding: 30px;"><i data-feather="info"></i><p>Belum ada transaksi untuk dokter ini.</p></div>`;
+                if (typeof feather !== 'undefined') feather.replace();
                 return;
             }
 
-            const sortedTransactions = transactions.slice().sort((a, b) =>
-                new Date(b.date) - new Date(a.date)
-            );
+            const sortedTransactions = transactions.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            const totalExpense = sortedTransactions.filter(t =>
-                t.type === 'expense' || !t.type
-            ).reduce((sum, t) => sum + t.amount, 0);
-
-            // Desktop table
             let tableHTML = `
-                <div class="table-wrapper">
-                    <table class="table">
+                <div class="table-container">
+                    <table>
                         <thead>
                             <tr>
-                                <th>No</th>
                                 <th>Tanggal</th>
                                 <th>Keterangan</th>
-                                <th>Jenis</th>
-                                <th>Nominal</th>
-                                <th></th>
+                                <th style="text-align: right;">Nominal</th>
+                                <th>Tindakan</th>
                             </tr>
                         </thead>
-                        <tbody>
-            `;
+                        <tbody>`;
 
-            sortedTransactions.forEach((t, index) => {
+            sortedTransactions.forEach(t => {
                 const isIncome = t.type === 'income';
+                const typeLabel = isIncome ? '(Pemasukan)' : '(Pengeluaran)';
+                const descriptionText = `${t.description} <em style="font-size:0.8em; color:${isIncome ? 'var(--green)' : 'var(--red)'};">${typeLabel}</em>`;
+
                 tableHTML += `
                     <tr>
-                        <td><strong>${index + 1}</strong></td>
                         <td>${formatDate(t.date)}</td>
-                        <td>${t.description}</td>
-                        <td>
-                            <span class="badge ${isIncome ? 'badge-success' : 'badge-danger'}">
-                                <i class="fas ${isIncome ? 'fa-arrow-up' : 'fa-arrow-down'}"></i>
-                                ${isIncome ? 'Pemasukan' : 'Pengeluaran'}
-                            </span>
+                        <td class="description-cell" title="${t.description} ${typeLabel}">${descriptionText}</td>
+                        <td class="amount-cell ${isIncome ? 'income-amount' : 'expense-amount'}">
+                            ${isIncome ? '+' : '-'} ${formatCurrency(t.amount)}
                         </td>
-                        <td class="amount-cell ${isIncome ? 'amount-positive' : 'amount-negative'}">
-                            ${isIncome ? '+' : '-'}${formatCurrency(t.amount)}
-                        </td>
-                        <td>
-                            <button class="delete-btn" onclick="showDeleteConfirm(${t.id})" title="Hapus transaksi">
-                                <i class="fas fa-trash"></i>
+                        <td class="transaction-actions">
+                            <button class="btn btn-icon edit-btn" onclick="showEditTransactionModal(${t.id})" title="Edit Transaksi">
+                                <i data-feather="edit-2"></i>
+                            </button>
+                            <button class="btn btn-icon delete-btn" onclick="showDeleteConfirm(${t.id})" title="Hapus Transaksi">
+                                <i data-feather="trash-2"></i>
                             </button>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             });
 
-            tableHTML += `
-                        <tr class="total-row">
-                            <td colspan="4"><strong>Total Pengeluaran</strong></td>
-                            <td class="amount-cell"><strong>${formatCurrency(totalExpense)}</strong></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            `;
-
-            // Mobile cards
-            let cardsHTML = '<div class="transaction-cards">';
-
-            sortedTransactions.forEach((t, index) => {
-                const isIncome = t.type === 'income';
-                cardsHTML += `
-                    <div class="transaction-card">
-                        <div class="transaction-header">
-                            <div class="transaction-info">
-                                <h4>${t.description}</h4>
-                                <p>#${index + 1}</p>
-                            </div>
-                            <div class="transaction-amount">
-                                <div class="amount ${isIncome ? 'amount-positive' : 'amount-negative'}">
-                                    ${isIncome ? '+' : '-'}${formatCurrency(t.amount)}
-                                </div>
-                                <span class="badge type-badge ${isIncome ? 'badge-success' : 'badge-danger'}">
-                                    <i class="fas ${isIncome ? 'fa-arrow-up' : 'fa-arrow-down'}"></i>
-                                    ${isIncome ? 'Pemasukan' : 'Pengeluaran'}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="transaction-footer">
-                            <div class="transaction-date">
-                                <i class="fas fa-calendar-alt"></i>
-                                ${formatDate(t.date)}
-                            </div>
-                            <div class="transaction-actions">
-                                <button class="delete-btn" onclick="showDeleteConfirm(${t.id})" title="Hapus transaksi">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            cardsHTML += '</div>';
-
-            // Mobile summary
-            cardsHTML += `
-                <div class="mobile-summary">
-                    <i class="fas fa-calculator"></i>
-                    Total Pengeluaran: ${formatCurrency(totalExpense)}
-                </div>
-            `;
-
-            container.innerHTML = tableHTML + cardsHTML;
+            tableHTML += '</tbody></table></div>';
+            container.innerHTML = tableHTML;
+            if (typeof feather !== 'undefined') feather.replace();
         }
 
-        function formatAmountInput(input) {
-            let value = input.value.replace(/\./g, '').replace(/,/g, '');
-
-            if (value === '') {
-                input.value = '';
-                return;
-            }
-
-            if (!/^\d+$/.test(value)) {
-                value = value.replace(/\D/g, '');
-            }
-
-            if (value !== '') {
-                input.value = formatNumber(parseInt(value));
-            }
-        }
-
-        // ===== TRANSACTION MANAGEMENT =====
-        async function addExpense() {
-            const date = document.getElementById('expenseDate').value;
-            const description = document.getElementById('expenseDesc').value.trim();
-            const amountStr = document.getElementById('expenseAmount').value;
-            const amount = unformatNumber(amountStr);
+        // ===== CORE LOGIC FUNCTIONS (addExpense, addDoctor, etc. - CORE LOGIC UNCHANGED) =====
+        async function addExpense() { // Reads from addExpenseModal
+            const date = document.getElementById('expenseDateModal').value;
+            const description = document.getElementById('expenseDescModal').value.trim();
+            const amount = unformatNumber(document.getElementById('expenseAmountModal').value);
 
             if (!date || !description || !amount || amount <= 0) {
-                showNotification('Harap isi semua field dengan benar', 'error');
+                showNotification('❌ Harap isi semua field pengeluaran dengan benar.', 'error');
                 return;
             }
 
             const doctor = doctors.find(d => d.id == currentDoctorId);
-
             if (doctor) {
                 const newTransaction = {
                     id: Date.now(),
                     date: date,
                     description: description,
                     amount: amount,
-                    type: 'expense'
+                    type: 'expense',
+                    createdAt: new Date().toISOString()
                 };
-
                 doctor.transactions.push(newTransaction);
-
                 await saveUserData();
-                updateDoctorInfo(doctor);
-
-                clearExpenseForm();
-                toggleExpenseForm();
-
-                const totalExpenseAfter = doctor.transactions.filter(t =>
-                    t.type === 'expense' || !t.type
-                ).reduce((sum, t) => sum + t.amount, 0);
-
-                showNotification('Pengeluaran berhasil ditambahkan! Sisa saldo: ' + formatCurrency(doctor.totalDeposit - totalExpenseAfter), 'success');
+                updateDoctorInfoUI(doctor);
+                closeModal('addExpenseModal');
+                document.getElementById('addExpenseForm').reset(); // Reset form in modal
+                showNotification('✅ Pengeluaran berhasil dicatat!', 'success');
             } else {
-                showNotification('Error: Dokter tidak ditemukan', 'error');
+                showNotification('❌ Dokter tidak ditemukan. Tidak dapat menambah pengeluaran.', 'error');
             }
         }
 
         async function addDoctor() {
             const name = document.getElementById('newDoctorName').value.trim();
-            const depositStr = document.getElementById('initialDeposit').value;
-            const deposit = unformatNumber(depositStr);
+            const initialDepositAmount = unformatNumber(document.getElementById('initialDeposit').value);
 
             if (!name) {
-                showNotification('Nama dokter harus diisi', 'error');
+                showNotification('❌ Nama dokter tidak boleh kosong.', 'error');
+                document.getElementById('newDoctorName').focus();
                 return;
             }
-
-            const existingDoctor = doctors.find(d =>
-                d.name.toLowerCase() === name.toLowerCase()
-            );
-
-            if (existingDoctor) {
-                showNotification('Dokter dengan nama "' + name + '" sudah ada!', 'error');
+            if (doctors.find(d => d.name.toLowerCase() === name.toLowerCase())) {
+                showNotification('❌ Dokter dengan nama ini sudah terdaftar.', 'error');
                 document.getElementById('newDoctorName').focus();
                 return;
             }
@@ -2645,17 +1861,18 @@
                 name: name,
                 totalDeposit: 0,
                 transactions: [],
-                createdAt: new Date(),
-                updatedAt: new Date()
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
             };
 
-            if (deposit > 0) {
+            if (initialDepositAmount > 0) {
                 const initialDepositTransaction = {
                     id: Date.now() + 1,
                     date: new Date().toISOString().split('T')[0],
                     description: 'Deposit Awal',
-                    amount: deposit,
-                    type: 'income'
+                    amount: initialDepositAmount,
+                    type: 'income',
+                    createdAt: new Date().toISOString()
                 };
                 newDoctor.transactions.push(initialDepositTransaction);
             }
@@ -2663,20 +1880,20 @@
             doctors.push(newDoctor);
             await saveUserData();
             loadDoctors();
-            document.getElementById('doctorSelect').value = newDoctor.id;
             selectDoctor(newDoctor.id);
             closeModal('addDoctorModal');
-
-            showNotification('Dokter "' + name + '" berhasil ditambahkan!', 'success');
+            showNotification(`✅ Dokter "${name}" berhasil ditambahkan!`, 'success');
+            document.getElementById('newDoctorName').value = '';
+            document.getElementById('initialDeposit').value = '';
         }
 
         async function addDeposit() {
-            const amountStr = document.getElementById('additionalDeposit').value;
-            const amount = unformatNumber(amountStr);
-            const description = document.getElementById('depositDesc').value.trim() || 'Tambah Deposit';
+            const amount = unformatNumber(document.getElementById('additionalDeposit').value);
+            const description = document.getElementById('depositDesc').value.trim() || 'Tambah Deposit Rutin';
 
             if (!amount || amount <= 0) {
-                showNotification('Jumlah deposit harus diisi dengan benar', 'error');
+                showNotification('❌ Jumlah deposit tidak valid atau kosong.', 'error');
+                document.getElementById('additionalDeposit').focus();
                 return;
             }
 
@@ -2687,689 +1904,428 @@
                     date: new Date().toISOString().split('T')[0],
                     description: description,
                     amount: amount,
-                    type: 'income'
+                    type: 'income',
+                    createdAt: new Date().toISOString()
                 };
-
                 doctor.transactions.push(depositTransaction);
                 await saveUserData();
-                updateDoctorInfo(doctor);
+                updateDoctorInfoUI(doctor);
                 closeModal('addDepositModal');
-
                 document.getElementById('additionalDeposit').value = '';
                 document.getElementById('depositDesc').value = '';
-
-                showNotification('Deposit berhasil ditambahkan!', 'success');
+                showNotification('✅ Deposit berhasil ditambahkan!', 'success');
+            } else {
+                showNotification('❌ Dokter tidak ditemukan. Tidak dapat menambah deposit.', 'error');
             }
         }
 
         async function confirmDelete() {
             const doctor = doctors.find(d => d.id == currentDoctorId);
             if (doctor && deleteTransactionId) {
-                doctor.transactions = doctor.transactions.filter(t =>
-                    t.id != deleteTransactionId
-                );
+                doctor.transactions = doctor.transactions.filter(t => t.id != deleteTransactionId);
+                doctor.updatedAt = new Date().toISOString();
                 await saveUserData();
-                updateDoctorInfo(doctor);
+                updateDoctorInfoUI(doctor);
                 closeModal('confirmDeleteModal');
-                showNotification('Transaksi berhasil dihapus', 'success');
+                showNotification('✅ Transaksi berhasil dihapus.', 'success');
+                deleteTransactionId = null;
             }
         }
 
         async function confirmDeleteDoctor() {
             if (currentDoctorId) {
-                const doctorName = doctors.find(d => d.id == currentDoctorId)?.name || 'Dokter';
-
+                const doctorName = doctors.find(d => d.id == currentDoctorId)?.name || "Dokter ini";
                 doctors = doctors.filter(d => d.id != currentDoctorId);
                 await saveUserData();
                 loadDoctors();
-
                 currentDoctorId = null;
-                document.getElementById('doctorSelect').value = '';
-                document.getElementById('statsSection').style.display = 'none';
-                document.getElementById('quickActions').style.display = 'none';
-                document.getElementById('expenseForm').style.display = 'none';
-                document.getElementById('transactionsSection').style.display = 'none';
-                document.getElementById('noDoctorSelected').style.display = 'block';
-                document.getElementById('deleteDoctorBtn').style.display = 'none';
-
+                selectDoctor(null);
                 closeModal('confirmDeleteDoctorModal');
-                showNotification(doctorName + ' berhasil dihapus!', 'success');
-
+                showNotification(`✅ ${doctorName} dan semua datanya berhasil dihapus.`, 'success');
                 if (doctors.length > 0) {
                     selectDoctor(doctors[0].id);
-                    document.getElementById('doctorSelect').value = doctors[0].id;
                 }
             }
         }
 
-        // ===== FORM FUNCTIONS =====
-        function toggleExpenseForm() {
-            const form = document.getElementById('expenseForm');
-            const btn = document.getElementById('toggleExpenseBtn');
-
-            if (form.style.display === 'none' || form.style.display === '') {
-                form.style.display = 'block';
-                btn.innerHTML = '<i class="fas fa-times"></i><span class="btn-text"> Tutup Form</span>';
-                btn.className = 'btn btn-outline flex-1';
-
-                setTimeout(() => {
-                    document.getElementById('expenseDesc').focus();
-                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-            } else {
-                form.style.display = 'none';
-                btn.innerHTML = '<i class="fas fa-minus-circle"></i><span class="btn-text"> Tambah Pengeluaran</span>';
-                btn.className = 'btn btn-primary flex-1';
-            }
-        }
-
-        function clearExpenseForm() {
-            document.getElementById('expenseDesc').value = '';
-            document.getElementById('expenseAmount').value = '';
-            setTodayDate();
-            document.getElementById('expenseDesc').focus();
+        // ===== FORM & MODAL UI FUNCTIONS (ADAPTED) =====
+        function showAddExpenseModal() {
+            document.getElementById('addExpenseForm').reset(); // Clear previous input
+            setTodayDate('expenseDateModal'); // Set today's date for the modal input
+            document.getElementById('addExpenseModal').classList.add('show');
+            document.getElementById('expenseDescModal').focus();
         }
 
         function checkDoctorName() {
-            const name = document.getElementById('newDoctorName').value.trim();
-            const nameField = document.getElementById('newDoctorName');
-            const hint = document.getElementById('nameHint');
+            const nameInput = document.getElementById('newDoctorName');
+            const name = nameInput.value.trim();
+            const hintElement = document.getElementById('nameHint');
 
-            if (name.length > 0) {
-                const existingDoctor = doctors.find(d =>
-                    d.name.toLowerCase() === name.toLowerCase()
-                );
-
-                if (existingDoctor) {
-                    nameField.style.borderColor = 'var(--danger-color)';
-                    nameField.style.backgroundColor = '#fef2f2';
-                    hint.style.display = 'block';
-                    hint.style.color = 'var(--danger-color)';
-                    hint.textContent = 'Nama dokter sudah ada, gunakan nama yang berbeda';
-                } else {
-                    nameField.style.borderColor = 'var(--success-color)';
-                    nameField.style.backgroundColor = '#f0fdf4';
-                    hint.style.display = 'block';
-                    hint.style.color = 'var(--success-color)';
-                    hint.textContent = 'Nama tersedia ✓';
-                }
-            } else {
-                nameField.style.borderColor = 'var(--border-color)';
-                nameField.style.backgroundColor = 'white';
-                hint.style.display = 'none';
+            if (name.length === 0) {
+                hintElement.style.display = 'none';
+                nameInput.style.borderColor = 'var(--border-color)';
+                return;
             }
+
+            const existingDoctor = doctors.find(d => d.name.toLowerCase() === name.toLowerCase());
+            if (existingDoctor) {
+                hintElement.textContent = 'Nama dokter ini sudah ada. Gunakan nama lain.';
+                hintElement.style.color = 'var(--red)';
+                nameInput.style.borderColor = 'var(--red)';
+            } else {
+                hintElement.textContent = 'Nama tersedia ✓';
+                hintElement.style.color = 'var(--green)';
+                nameInput.style.borderColor = 'var(--green)';
+            }
+            hintElement.style.display = 'block';
         }
 
-        // ===== MODAL FUNCTIONS =====
         function showAddDoctorModal() {
+            document.getElementById('addDoctorModal').classList.add('show');
             document.getElementById('newDoctorName').value = '';
             document.getElementById('initialDeposit').value = '';
-            document.getElementById('addDoctorModal').style.display = 'block';
+            checkDoctorName();
             document.getElementById('newDoctorName').focus();
         }
 
         function showAddDepositModal() {
             document.getElementById('additionalDeposit').value = '';
             document.getElementById('depositDesc').value = '';
-            document.getElementById('addDepositModal').style.display = 'block';
+            document.getElementById('addDepositModal').classList.add('show');
+            document.getElementById('additionalDeposit').focus();
         }
 
         function showDeleteConfirm(transactionId) {
             deleteTransactionId = transactionId;
-            document.getElementById('confirmDeleteModal').style.display = 'block';
+            document.getElementById('confirmDeleteModal').classList.add('show');
         }
 
         function showDeleteDoctorModal() {
             const doctor = doctors.find(d => d.id == currentDoctorId);
             if (doctor) {
-                document.getElementById('deleteDoctorText').textContent =
-                    'Yakin ingin menghapus "' + doctor.name + '" beserta semua data transaksinya? Tindakan ini tidak dapat dibatalkan.';
-                document.getElementById('confirmDeleteDoctorModal').style.display = 'block';
+                document.getElementById('deleteDoctorText').textContent = `Anda yakin ingin menghapus "Dr. ${doctor.name}" beserta seluruh riwayat transaksinya? Tindakan ini tidak dapat diurungkan.`;
+                document.getElementById('confirmDeleteDoctorModal').classList.add('show');
+            } else {
+                showNotification('ℹ️ Tidak ada dokter yang dipilih untuk dihapus.', 'info');
             }
         }
 
         function showExportModal() {
             const doctor = doctors.find(d => d.id == currentDoctorId);
             if (!doctor) {
-                showNotification('Pilih dokter terlebih dahulu', 'error');
+                showNotification('❌ Pilih dokter terlebih dahulu untuk export laporan.', 'error');
                 return;
             }
-
-            if (doctor.transactions.length === 0) {
-                showNotification('Tidak ada transaksi untuk di-export', 'error');
+            if (!doctor.transactions || doctor.transactions.length === 0) {
+                showNotification('ℹ️ Tidak ada transaksi untuk dokter ini yang bisa diexport.', 'error');
                 return;
             }
-
-            document.getElementById('exportPDFModal').style.display = 'block';
+            document.getElementById('exportPDFModal').classList.add('show');
+            document.getElementById('exportType').value = 'all';
+            document.getElementById('dateRangeGroup').style.display = 'none';
+            document.getElementById('exportFromDate').value = '';
+            document.getElementById('exportToDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('exportSort').value = 'newest';
             setupExportModalEventListeners();
         }
 
         function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('show');
         }
 
-        // ===== PDF EXPORT =====
+        // ===== EDIT TRANSACTION LOGIC =====
+        function showEditTransactionModal(transactionId) {
+            currentEditingTransactionId = transactionId;
+            const doctor = doctors.find(d => d.id == currentDoctorId);
+            if (!doctor) return;
+
+            const transaction = doctor.transactions.find(t => t.id == transactionId);
+            if (!transaction) return;
+
+            document.getElementById('editTransactionId').value = transaction.id;
+            document.getElementById('editTransactionDate').value = transaction.date;
+            document.getElementById('editTransactionDesc').value = transaction.description;
+            document.getElementById('editTransactionAmount').value = formatNumber(transaction.amount); // Format for display
+            document.getElementById('editTransactionType').value = transaction.type;
+
+
+            document.getElementById('editTransactionModal').classList.add('show');
+            if (typeof feather !== 'undefined') feather.replace();
+        }
+
+        async function saveEditedTransaction() {
+            const transactionId = currentEditingTransactionId;
+            const newDate = document.getElementById('editTransactionDate').value;
+            const newDesc = document.getElementById('editTransactionDesc').value.trim();
+            const newAmount = unformatNumber(document.getElementById('editTransactionAmount').value);
+            // Type is not editable for now, but could be added:
+            // const newType = document.getElementById('editTransactionType').value; 
+
+            if (!newDate || !newDesc || !newAmount || newAmount <= 0) {
+                showNotification('❌ Harap isi semua field edit dengan benar.', 'error');
+                return;
+            }
+
+            const doctor = doctors.find(d => d.id == currentDoctorId);
+            if (doctor) {
+                const transactionIndex = doctor.transactions.findIndex(t => t.id == transactionId);
+                if (transactionIndex > -1) {
+                    doctor.transactions[transactionIndex].date = newDate;
+                    doctor.transactions[transactionIndex].description = newDesc;
+                    doctor.transactions[transactionIndex].amount = newAmount;
+                    // doctor.transactions[transactionIndex].type = newType; // If type editing is enabled
+                    doctor.transactions[transactionIndex].updatedAt = new Date().toISOString();
+
+                    await saveUserData();
+                    updateDoctorInfoUI(doctor);
+                    closeModal('editTransactionModal');
+                    showNotification('✅ Transaksi berhasil diperbarui!', 'success');
+                } else {
+                    showNotification('❌ Transaksi tidak ditemukan untuk diedit.', 'error');
+                }
+            }
+            currentEditingTransactionId = null;
+        }
+
+
+        // ===== PDF EXPORT LOGIC =====
         function setupExportModalEventListeners() {
             const exportTypeSelect = document.getElementById('exportType');
-            if (exportTypeSelect && !exportTypeSelect.hasEventListener) {
+            const dateRangeGroup = document.getElementById('dateRangeGroup');
+            if (!exportTypeSelect.dataset.listenerAttached) {
                 exportTypeSelect.onchange = function () {
-                    const dateRangeGroup = document.getElementById('dateRangeGroup');
-                    if (dateRangeGroup) {
-                        if (this.value === 'range') {
-                            dateRangeGroup.style.display = 'block';
-                            const today = new Date().toISOString().split('T')[0];
-                            const lastMonth = new Date();
-                            lastMonth.setMonth(lastMonth.getMonth() - 1);
-                            const fromDateEl = document.getElementById('exportFromDate');
-                            const toDateEl = document.getElementById('exportToDate');
-                            if (fromDateEl) fromDateEl.value = lastMonth.toISOString().split('T')[0];
-                            if (toDateEl) toDateEl.value = today;
-                        } else {
-                            dateRangeGroup.style.display = 'none';
-                        }
+                    dateRangeGroup.style.display = this.value === 'range' ? 'block' : 'none';
+                    if (this.value === 'range' && !document.getElementById('exportFromDate').value) {
+                        const today = new Date();
+                        const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+                        document.getElementById('exportFromDate').value = lastMonth.toISOString().split('T')[0];
+                        document.getElementById('exportToDate').value = today.toISOString().split('T')[0];
                     }
                 };
-                exportTypeSelect.hasEventListener = true;
+                exportTypeSelect.dataset.listenerAttached = 'true';
             }
         }
 
         function processExportToPDF() {
             const doctor = doctors.find(d => d.id == currentDoctorId);
-            if (!doctor) return;
-
-            const exportTypeEl = document.getElementById('exportType');
-            const exportSortEl = document.getElementById('exportSort');
-            const fromDateEl = document.getElementById('exportFromDate');
-            const toDateEl = document.getElementById('exportToDate');
-
-            if (!exportTypeEl || !exportSortEl) {
-                showNotification('Error: Form elements not found', 'error');
+            if (!doctor) {
+                showNotification('❌ Dokter tidak ditemukan untuk export.', 'error');
                 return;
             }
 
-            const exportType = exportTypeEl.value;
-            const exportSort = exportSortEl.value;
-            const fromDate = fromDateEl ? fromDateEl.value : '';
-            const toDate = toDateEl ? toDateEl.value : '';
+            const exportType = document.getElementById('exportType').value;
+            const exportSort = document.getElementById('exportSort').value;
+            const fromDateStr = document.getElementById('exportFromDate').value;
+            const toDateStr = document.getElementById('exportToDate').value;
 
             let transactionsToExport = doctor.transactions.slice();
 
             if (exportType === 'range') {
-                if (!fromDate || !toDate) {
-                    showNotification('Pilih range tanggal terlebih dahulu', 'error');
+                if (!fromDateStr || !toDateStr) {
+                    showNotification('❌ Harap pilih rentang tanggal untuk export.', 'error');
                     return;
                 }
+                const fromDate = new Date(fromDateStr);
+                fromDate.setHours(0, 0, 0, 0);
+                const toDate = new Date(toDateStr);
+                toDate.setHours(23, 59, 59, 999);
 
-                transactionsToExport = transactionsToExport.filter(t =>
-                    t.date >= fromDate && t.date <= toDate
-                );
+                transactionsToExport = transactionsToExport.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate >= fromDate && transactionDate <= toDate;
+                });
 
                 if (transactionsToExport.length === 0) {
-                    showNotification('Tidak ada transaksi dalam range tanggal tersebut', 'error');
+                    showNotification('ℹ️ Tidak ada transaksi ditemukan dalam rentang tanggal yang dipilih.', 'info');
                     return;
                 }
             }
 
-            if (exportSort === 'newest') {
-                transactionsToExport.sort((a, b) => new Date(b.date) - new Date(a.date));
-            } else {
-                transactionsToExport.sort((a, b) => new Date(a.date) - new Date(b.date));
-            }
+            transactionsToExport.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return exportSort === 'newest' ? dateB - dateA : dateA - dateB;
+            });
 
             try {
-                const jsPDF = window.jspdf && window.jspdf.jsPDF;
-
+                const { jsPDF } = window.jspdf;
                 if (!jsPDF) {
-                    showNotification('PDF library tidak tersedia', 'error');
+                    showNotification('❌ Library PDF (jsPDF) tidak ditemukan.', 'error');
                     return;
                 }
+                const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
 
-                const doc = new jsPDF();
-
-                // Header
-                doc.setFontSize(18);
+                doc.setFontSize(16);
                 doc.setFont(undefined, 'bold');
-                doc.text('LAPORAN PENGELUARAN', 20, 20);
+                doc.text(`Laporan Keuangan - Dr. ${doctor.name}`, 14, 20);
 
+                doc.setFontSize(10);
                 doc.setFont(undefined, 'normal');
-                doc.setFontSize(14);
-                doc.text(doctor.name, 20, 35);
-                doc.text('Tanggal Export: ' + new Date().toLocaleDateString('id-ID'), 20, 45);
+                doc.text(`Dicetak oleh: ${(currentUser && currentUser.displayName) || (currentUser && currentUser.email) || 'Pengguna Aplikasi'}`, 14, 26);
+                doc.text(`Tanggal Cetak: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`, 14, 32);
 
-                if (currentUser && currentUser.email !== 'developer@test.com') {
-                    doc.text('User: ' + (currentUser.displayName || currentUser.email), 20, 55);
-                }
-
+                let currentY = 40;
                 if (exportType === 'range') {
-                    doc.text('Periode: ' + formatDate(fromDate) + ' s/d ' + formatDate(toDate), 20, 65);
+                    doc.text(`Periode Laporan: ${formatDate(fromDateStr)} s/d ${formatDate(toDateStr)}`, 14, currentY);
+                    currentY += 8;
                 }
 
-                // Summary
-                const totalExpense = transactionsToExport.filter(t =>
-                    t.type === 'expense' || !t.type
-                ).reduce((sum, t) => sum + t.amount, 0);
+                const totalExpenseForPeriod = transactionsToExport
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                const overallTotalDeposit = doctor.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+                const overallTotalExpense = doctor.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+                const overallRemainingBalance = overallTotalDeposit - overallTotalExpense;
 
-                const remainingBalance = doctor.totalDeposit - totalExpense;
+                doc.autoTable({
+                    startY: currentY,
+                    head: [['Deskripsi Ringkasan', 'Jumlah']],
+                    body: [
+                        ['Total Deposit Keseluruhan (Dr. ' + doctor.name + ')', formatCurrency(overallTotalDeposit)],
+                        ['Total Pengeluaran (Periode Laporan Ini)', formatCurrency(totalExpenseForPeriod)],
+                        ['Sisa Saldo Keseluruhan (Dr. ' + doctor.name + ')', formatCurrency(overallRemainingBalance)],
+                    ],
+                    theme: 'grid',
+                    headStyles: { fillColor: [79, 70, 229] },
+                    margin: { top: 10 }
+                });
+                currentY = doc.lastAutoTable.finalY + 10;
 
-                doc.setFontSize(12);
-                const yPos = exportType === 'range' ? 80 : 70;
-                doc.text('Total Deposit: ' + formatCurrency(doctor.totalDeposit), 20, yPos);
-                doc.text('Total Pengeluaran: ' + formatCurrency(totalExpense), 20, yPos + 10);
-
-                const balanceText = 'Sisa Saldo: ' + formatCurrency(remainingBalance);
-                const textWidth = doc.getTextWidth(balanceText);
-
-                if (remainingBalance < 0) {
-                    doc.setFillColor(220, 38, 38);
-                    doc.rect(20, yPos + 15, textWidth + 4, 8, 'F');
-                    doc.setTextColor(255, 255, 255);
-                } else {
-                    doc.setFillColor(5, 150, 105);
-                    doc.rect(20, yPos + 15, textWidth + 4, 8, 'F');
-                    doc.setTextColor(255, 255, 255);
-                }
-
-                doc.text(balanceText, 22, yPos + 21);
-                doc.setTextColor(0, 0, 0);
-
-                // Table content (simplified version due to length constraints)
                 if (transactionsToExport.length > 0) {
-                    doc.text('RIWAYAT TRANSAKSI (' + transactionsToExport.length + ' transaksi):', 20, yPos + 40);
-
-                    const tableData = transactionsToExport.map((t, index) => [
-                        (index + 1).toString(),
-                        formatDate(t.date),
-                        t.description,
-                        t.type === 'income' ? 'Pemasukan' : 'Pengeluaran',
-                        formatCurrency(t.amount)
-                    ]);
-
                     doc.autoTable({
-                        head: [['No', 'Tanggal', 'Keterangan', 'Jenis', 'Nominal']],
-                        body: tableData,
-                        startY: yPos + 50,
-                        theme: 'grid',
-                        styles: { fontSize: 8 },
-                        headStyles: { fillColor: [37, 99, 235] }
+                        startY: currentY,
+                        head: [['No.', 'Tanggal', 'Keterangan', 'Jenis', 'Nominal (Rp)']],
+                        body: transactionsToExport.map((t, index) => [
+                            index + 1,
+                            formatDate(t.date),
+                            t.description,
+                            t.type === 'income' ? 'Pemasukan' : 'Pengeluaran',
+                            { content: formatCurrency(t.amount), styles: { halign: 'right' } }
+                        ]),
+                        theme: 'striped',
+                        headStyles: { fillColor: [79, 70, 229] },
+                        columnStyles: {
+                            0: { cellWidth: 10 },
+                            1: { cellWidth: 25 },
+                            2: { cellWidth: 'auto' },
+                            3: { cellWidth: 25 },
+                            4: { cellWidth: 30, halign: 'right' }
+                        },
+                        didParseCell: function (data) {
+                            if (data.row.section === 'body' && data.column.dataKey === 3) {
+                                if (data.cell.raw === 'Pemasukan') {
+                                    data.cell.styles.textColor = [16, 185, 129];
+                                } else if (data.cell.raw === 'Pengeluaran') {
+                                    data.cell.styles.textColor = [239, 68, 68];
+                                }
+                            }
+                        }
                     });
+                } else {
+                    doc.text('Tidak ada transaksi untuk ditampilkan dalam periode ini.', 14, currentY);
                 }
 
-                let filename = 'Laporan_' + doctor.name.replace(/\s+/g, '_');
-                if (exportType === 'range') {
-                    filename += '_' + fromDate + '_to_' + toDate;
-                }
-                filename += '_' + new Date().getTime() + '.pdf';
-
+                let filename = `Laporan_${doctor.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
                 doc.save(filename);
-                showNotification('PDF berhasil diexport!', 'success');
-
+                showNotification('✅ Laporan PDF berhasil diexport!', 'success');
             } catch (error) {
-                console.error('Export error:', error);
-                showNotification('Gagal export: ' + error.message, 'error');
+                console.error('Kesalahan saat export PDF:', error);
+                showNotification('❌ Gagal export PDF: ' + error.message, 'error');
             }
-
             closeModal('exportPDFModal');
         }
 
-        // ===== MOBILE MENU =====
-        function toggleMobileMenu() {
+        // ===== DRAWER/SIDEBAR TOGGLE LOGIC =====
+        function toggleDrawer() {
             const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-
-            sidebar.classList.toggle('mobile-open');
+            const overlay = document.getElementById('mainContentOverlay');
+            const body = document.body;
+            sidebar.classList.toggle('open');
+            body.classList.toggle('drawer-open');
+            if (overlay) { // Check if overlay exists
+                overlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+            }
         }
 
-        // ===== EVENT LISTENERS =====
+        function closeDrawer() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mainContentOverlay');
+            const body = document.body;
+            sidebar.classList.remove('open');
+            body.classList.remove('drawer-open');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        }
+
+
+        // ===== EVENT LISTENERS SETUP =====
         function setupEventListeners() {
-            // Google login button
             document.getElementById('googleLoginBtn').onclick = signInWithGoogle;
-
-            // Logout button
-            document.getElementById('logoutBtn').onclick = signOut;
-
-            // Mobile menu button
-            document.getElementById('mobileMenuBtn').onclick = toggleMobileMenu;
-
-            // Doctor selection
-            document.getElementById('doctorSelect').onchange = function () {
-                selectDoctor(this.value);
+            // Desktop logout button
+            const logoutBtnDesktop = document.getElementById('logoutBtnDesktop');
+            if (logoutBtnDesktop) logoutBtnDesktop.onclick = signOut;
+            // Sidebar (drawer) logout button
+            const logoutBtnSidebar = document.getElementById('logoutBtnSidebar');
+            if (logoutBtnSidebar) logoutBtnSidebar.onclick = () => {
+                signOut();
+                closeDrawer(); // Close drawer after logout
             };
 
-            // Toggle expense form button
-            document.getElementById('toggleExpenseBtn').onclick = toggleExpenseForm;
+            // Changed from toggleExpenseBtn to addExpenseModalBtn
+            const addExpenseModalButton = document.getElementById('addExpenseModalBtn');
+            if (addExpenseModalButton) addExpenseModalButton.onclick = showAddExpenseModal;
 
-            // Close form button
-            document.getElementById('closeFormBtn').onclick = toggleExpenseForm;
+            document.getElementById('addExpenseForm').onsubmit = e => { e.preventDefault(); addExpense(); };
+            document.getElementById('editTransactionForm').onsubmit = e => { e.preventDefault(); saveEditedTransaction(); };
 
-            // Reset form button
-            document.getElementById('resetFormBtn').onclick = clearExpenseForm;
+            // Hamburger button to toggle drawer
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            if (hamburgerBtn) hamburgerBtn.onclick = toggleDrawer;
 
-            // Form submission
-            document.getElementById('addExpenseForm').onsubmit = function (e) {
-                e.preventDefault();
-                addExpense();
-                return false;
-            };
+            // Overlay click to close drawer
+            const overlay = document.getElementById('mainContentOverlay');
+            if (overlay) overlay.onclick = closeDrawer;
 
-            // Modal close on outside click
-            window.onclick = function (event) {
-                if (event.target.classList.contains('modal')) {
-                    event.target.style.display = 'none';
-                }
-            };
 
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function (event) {
-                const sidebar = document.getElementById('sidebar');
-                const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-
-                if (window.innerWidth <= 768 &&
-                    sidebar.classList.contains('mobile-open') &&
-                    !sidebar.contains(event.target) &&
-                    !mobileMenuBtn.contains(event.target)) {
-                    sidebar.classList.remove('mobile-open');
-                }
+            window.addEventListener('click', function (event) {
+                document.querySelectorAll('.modal.show').forEach(modal => {
+                    if (event.target == modal) {
+                        closeModal(modal.id);
+                    }
+                });
             });
 
-            // Handle window resize
-            window.addEventListener('resize', function () {
-                const sidebar = document.getElementById('sidebar');
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('mobile-open');
+            window.addEventListener('keydown', function (event) {
+                if (event.key === "Escape" || event.key === "Esc") {
+                    document.querySelectorAll('.modal.show').forEach(modal => closeModal(modal.id));
+                    if (document.getElementById('sidebar').classList.contains('open')) {
+                        closeDrawer(); // Close drawer on Escape key if open
+                    }
                 }
             });
         }
 
-        // ===== INITIALIZATION =====
+        // ===== APPLICATION INITIALIZATION =====
         window.onload = function () {
-            console.log('App initializing...');
+            console.log('Aplikasi Sistem Deposit Dokter sedang diinisialisasi...');
+            if (typeof feather !== 'undefined') feather.replace();
             updateConnectionStatus();
             setupEventListeners();
 
-            // Initialize Firebase first, then auth
             initializeFirebase();
 
-            // Small delay to ensure Firebase is ready
             setTimeout(() => {
                 initAuth();
-            }, 100);
+            }, 150);
         };
 
-        // ===== ADDITIONAL STYLES FOR BADGES =====
-        const additionalStyles = `
-            .badge {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.25rem;
-                padding: 0.375rem 0.75rem;
-                font-size: 0.75rem;
-                font-weight: 600;
-                border-radius: 50px;
-                text-transform: uppercase;
-                letter-spacing: 0.025em;
-            }
+        if (typeof feather === 'undefined') {
+            console.warn('Feather Icons CDN tidak termuat. Ikon mungkin tidak tampil.');
+            window.feather = { replace: () => { } };
+        }
 
-            .badge-success {
-                background: rgba(16, 185, 129, 0.1);
-                color: var(--success-color);
-                border: 1px solid rgba(16, 185, 129, 0.2);
-            }
-
-            .badge-danger {
-                background: rgba(239, 68, 68, 0.1);
-                color: var(--danger-color);
-                border: 1px solid rgba(239, 68, 68, 0.2);
-            }
-
-            .badge-primary {
-                background: rgba(99, 102, 241, 0.1);
-                color: var(--primary-color);
-                border: 1px solid rgba(99, 102, 241, 0.2);
-            }
-
-            /* Loading states */
-            .btn:disabled {
-                opacity: 0.6;
-                cursor: not-allowed;
-                transform: none !important;
-            }
-
-            .btn-loading {
-                position: relative;
-                color: transparent !important;
-            }
-
-            .btn-loading::after {
-                content: '';
-                position: absolute;
-                width: 16px;
-                height: 16px;
-                top: 50%;
-                left: 50%;
-                margin-left: -8px;
-                margin-top: -8px;
-                border: 2px solid #ffffff;
-                border-radius: 50%;
-                border-top-color: transparent;
-                animation: spin 1s linear infinite;
-            }
-
-            /* Improved focus states */
-            .btn:focus,
-            .form-input:focus,
-            .doctor-select:focus {
-                outline: 2px solid var(--primary-color);
-                outline-offset: 2px;
-            }
-
-            /* Better scrollbar for sidebar */
-            .sidebar::-webkit-scrollbar {
-                width: 6px;
-            }
-
-            .sidebar::-webkit-scrollbar-track {
-                background: rgba(255, 255, 255, 0.1);
-            }
-
-            .sidebar::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.3);
-                border-radius: 3px;
-            }
-
-            .sidebar::-webkit-scrollbar-thumb:hover {
-                background: rgba(255, 255, 255, 0.5);
-            }
-
-            /* Improved table responsive */
-            @media (max-width: 768px) {
-                .table-wrapper {
-                    font-size: 0.75rem;
-                }
-                
-                .table th,
-                .table td {
-                    padding: 0.5rem 0.25rem;
-                }
-
-                .stats-grid {
-                    gap: 1rem;
-                }
-
-                .stat-card {
-                    padding: 1.5rem;
-                }
-
-                .form-grid {
-                    gap: 1rem;
-                }
-            }
-
-            /* Animation for stats cards */
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            .stats-grid .stat-card {
-                animation: fadeInUp 0.6s ease forwards;
-            }
-
-            .stats-grid .stat-card:nth-child(1) {
-                animation-delay: 0.1s;
-            }
-
-            .stats-grid .stat-card:nth-child(2) {
-                animation-delay: 0.2s;
-            }
-
-            .stats-grid .stat-card:nth-child(3) {
-                animation-delay: 0.3s;
-            }
-
-            /* Improved modal backdrop */
-            .modal {
-                backdrop-filter: blur(8px);
-                -webkit-backdrop-filter: blur(8px);
-            }
-
-            /* Loading skeleton for cards */
-            .skeleton {
-                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-                background-size: 200% 100%;
-                animation: loading 1.5s infinite;
-            }
-
-            @keyframes loading {
-                0% {
-                    background-position: 200% 0;
-                }
-                100% {
-                    background-position: -200% 0;
-                }
-            }
-
-            /* Improved empty state */
-            .empty-state button {
-                margin-top: 1rem;
-            }
-
-            /* Better form validation styles */
-            .form-input.error {
-                border-color: var(--danger-color);
-                background-color: rgba(239, 68, 68, 0.05);
-            }
-
-            .form-input.success {
-                border-color: var(--success-color);
-                background-color: rgba(16, 185, 129, 0.05);
-            }
-
-            /* Improved notification positioning on mobile */
-            @media (max-width: 480px) {
-                .notification {
-                    top: 1rem;
-                    right: 1rem;
-                    left: 1rem;
-                    transform: translateY(-100px);
-                }
-
-                .notification.show {
-                    transform: translateY(0);
-                }
-            }
-
-            /* Dark mode support preparation */
-            @media (prefers-color-scheme: dark) {
-                .login-screen {
-                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-                }
-            }
-
-            /* Print styles for better PDF export */
-            @media print {
-                .sidebar,
-                .header,
-                .modal,
-                .notification {
-                    display: none !important;
-                }
-
-                .main-content {
-                    margin-left: 0 !important;
-                }
-
-                .card {
-                    box-shadow: none !important;
-                    border: 1px solid #ddd !important;
-                }
-            }
-
-            /* Accessibility improvements */
-            .sr-only {
-                position: absolute;
-                width: 1px;
-                height: 1px;
-                padding: 0;
-                margin: -1px;
-                overflow: hidden;
-                clip: rect(0, 0, 0, 0);
-                white-space: nowrap;
-                border: 0;
-            }
-
-            /* Focus visible for better keyboard navigation */
-            .btn:focus-visible,
-            .form-input:focus-visible,
-            .nav-link:focus-visible {
-                outline: 2px solid var(--primary-color);
-                outline-offset: 2px;
-            }
-
-            /* Improved button hover states */
-            .btn:not(:disabled):hover {
-                transform: translateY(-1px);
-                box-shadow: var(--shadow-lg);
-            }
-
-            .btn:not(:disabled):active {
-                transform: translateY(0);
-                box-shadow: var(--shadow-md);
-            }
-
-            /* Better table hover effects */
-            .table tbody tr:hover {
-                background: rgba(99, 102, 241, 0.04);
-                transform: scale(1.01);
-                transition: all 0.2s ease;
-            }
-
-            /* Improved modal animations */
-            .modal.show .modal-content {
-                animation: modalSlideIn 0.3s ease;
-            }
-
-            @keyframes modalSlideIn {
-                from {
-                    opacity: 0;
-                    transform: scale(0.95) translateY(-20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: scale(1) translateY(0);
-                }
-            }
-        `;
-
-        // Add additional styles to head
-        const styleSheet = document.createElement('style');
-        styleSheet.textContent = additionalStyles;
-        document.head.appendChild(styleSheet);
     </script>
 </body>
 
