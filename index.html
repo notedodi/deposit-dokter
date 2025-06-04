@@ -451,8 +451,9 @@
         .btn-sm { padding: 5px 10px; font-size: 12px; }
         .btn-icon { /* For icon-only buttons like edit/delete in table */
             padding: 6px;
-            width: 32px;
-            height: 32px;
+            width: 32px; /* Fixed width */
+            height: 32px; /* Fixed height */
+            flex-shrink: 0; /* Prevent shrinking */
         }
         .btn-icon i {
             margin: 0; /* No gap for icon-only buttons */
@@ -522,6 +523,10 @@
             width: 50px; /* Adjust width as needed */
             text-align: center;
         }
+         th.actions-column { /* Style for "Tindakan" column */
+            width: 100px; /* Adjust width to fit two icon buttons */
+            text-align: right; /* Align header text to right */
+        }
 
 
         td {
@@ -551,7 +556,8 @@
         .transaction-actions {
             display: flex;
             gap: 8px;
-            justify-content: flex-end;
+            justify-content: flex-end; /* Align buttons to the right of the cell */
+            align-items: center; /* Vertically align buttons */
         }
 
         .edit-btn {
@@ -724,6 +730,24 @@
             .pagination-controls .btn {
                 padding: 8px 12px; /* Slightly smaller buttons on mobile */
             }
+            th.actions-column { 
+                text-align: center; /* Center header text for actions */
+                min-width: 80px;
+            }
+            td .transaction-actions { 
+                justify-content: center; /* Center buttons in cell */
+                min-width: 80px;
+            }
+             .transaction-actions .btn-icon {
+                padding: 5px; /* Smaller padding for icon buttons on mobile */
+                width: 28px;
+                height: 28px;
+            }
+            .transaction-actions .btn-icon i {
+                width: 12px;
+                height: 12px;
+            }
+
         }
     </style>
 </head>
@@ -756,7 +780,7 @@
         <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
                 <i data-feather="briefcase" style="color: var(--primary-color); width:28px; height:28px;"></i>
-                <h1>KlinikKita</h1> 
+                <h1>WINGMAN</h1> 
             </div>
 
             <p class="sidebar-title">Manajemen Dokter</p>
@@ -1527,7 +1551,7 @@
                                 <th>Tanggal</th>
                                 <th>Keterangan</th>
                                 <th style="text-align: right;">Nominal</th>
-                                <th>Tindakan</th>
+                                <th class="actions-column">Tindakan</th>
                             </tr>
                         </thead>
                         <tbody>`;
