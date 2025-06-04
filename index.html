@@ -647,6 +647,31 @@
             /* Indigo-200 focus ring */
         }
 
+        .input-with-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-with-icon input {
+            padding-right: 40px;
+            /* Space for the icon */
+        }
+
+        .input-with-icon .calculator-trigger-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--secondary-color);
+        }
+
+        .input-with-icon .calculator-trigger-icon:hover {
+            color: var(--primary-color);
+        }
+
+
         /* ===== TRANSACTIONS TABLE ===== */
         .transactions-card {
             background: var(--card-background);
@@ -906,6 +931,92 @@
             justify-content: flex-end;
         }
 
+        /* ===== CALCULATOR MODAL STYLES ===== */
+        .calculator-content {
+            max-width: 320px;
+            /* Smaller width for calculator */
+            padding: 20px;
+        }
+
+        .calculator-display-container {
+            margin-bottom: 15px;
+        }
+
+        #calculatorDisplay {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.8rem;
+            text-align: right;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #f8fafc;
+            /* Light background for display */
+            color: var(--text-primary);
+            font-family: 'Inter', monospace;
+            /* Monospace for better number alignment */
+        }
+
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .calculator-buttons button {
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #f9fafb;
+            /* Light gray for buttons */
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .calculator-buttons button:hover {
+            background-color: #f1f5f9;
+            /* Slightly darker on hover */
+        }
+
+        .calculator-buttons button.operator {
+            background-color: #e2e8f0;
+            /* Different color for operators */
+            color: var(--primary-color);
+        }
+
+        .calculator-buttons button.operator:hover {
+            background-color: #cbd5e1;
+        }
+
+        .calculator-buttons button.primary {
+            /* For OK/Apply button */
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .calculator-buttons button.primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .calculator-buttons button.danger {
+            /* For C/Clear button */
+            background-color: #fee2e2;
+            /* Light red */
+            color: var(--red);
+        }
+
+        .calculator-buttons button.danger:hover {
+            background-color: #fecaca;
+            /* Darker light red */
+        }
+
+        .calculator-buttons .span-2 {
+            grid-column: span 2;
+        }
+
+
         /* ===== NOTIFICATION ===== */
         .notification {
             position: fixed;
@@ -1086,6 +1197,18 @@
                 height: 12px;
             }
 
+            .calculator-content {
+                max-width: 100%;
+                /* Full width on small screens for calculator */
+                padding: 15px;
+            }
+
+            .calculator-buttons button {
+                padding: 12px;
+                font-size: 1.1rem;
+            }
+
+
         }
     </style>
 </head>
@@ -1227,7 +1350,12 @@
             </div>
             <div class="form-group">
                 <label for="initialDeposit">Deposit Awal (Opsional)</label>
-                <input type="text" id="initialDeposit" placeholder="Contoh: 500.000" oninput="formatAmountInput(this)">
+                <div class="input-with-icon">
+                    <input type="text" id="initialDeposit" placeholder="Contoh: 500.000"
+                        oninput="formatAmountInput(this)">
+                    <i data-feather="grid" class="calculator-trigger-icon"
+                        onclick="showCalculatorModal('initialDeposit')"></i>
+                </div>
             </div>
             <div class="modal-buttons">
                 <button class="btn btn-outline" onclick="closeModal('addDoctorModal')">Batal</button>
@@ -1245,8 +1373,12 @@
             </div>
             <div class="form-group">
                 <label for="additionalDeposit">Jumlah Deposit (Rp)</label>
-                <input type="text" id="additionalDeposit" placeholder="Contoh: 200.000"
-                    oninput="formatAmountInput(this)">
+                <div class="input-with-icon">
+                    <input type="text" id="additionalDeposit" placeholder="Contoh: 200.000"
+                        oninput="formatAmountInput(this)">
+                    <i data-feather="grid" class="calculator-trigger-icon"
+                        onclick="showCalculatorModal('additionalDeposit')"></i>
+                </div>
             </div>
             <div class="modal-buttons">
                 <button class="btn btn-outline" onclick="closeModal('addDepositModal')">Batal</button>
@@ -1270,8 +1402,12 @@
                 </div>
                 <div class="form-group">
                     <label for="expenseAmountModal">Nominal (Rp)</label>
-                    <input type="text" id="expenseAmountModal" placeholder="Contoh: 50.000" required
-                        oninput="formatAmountInput(this)">
+                    <div class="input-with-icon">
+                        <input type="text" id="expenseAmountModal" placeholder="Contoh: 50.000" required
+                            oninput="formatAmountInput(this)">
+                        <i data-feather="grid" class="calculator-trigger-icon"
+                            onclick="showCalculatorModal('expenseAmountModal')"></i>
+                    </div>
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="btn btn-outline" onclick="closeModal('addExpenseModal')">Batal</button>
@@ -1306,7 +1442,11 @@
                 </div>
                 <div class="form-group">
                     <label for="editTransactionAmount">Nominal (Rp)</label>
-                    <input type="text" id="editTransactionAmount" required oninput="formatAmountInput(this)">
+                    <div class="input-with-icon">
+                        <input type="text" id="editTransactionAmount" required oninput="formatAmountInput(this)">
+                        <i data-feather="grid" class="calculator-trigger-icon"
+                            onclick="showCalculatorModal('editTransactionAmount')"></i>
+                    </div>
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="btn btn-outline"
@@ -1376,6 +1516,44 @@
         </div>
     </div>
 
+    <!-- Calculator Modal -->
+    <div id="calculatorModal" class="modal">
+        <div class="modal-content calculator-content">
+            <h3><i data-feather="calculator"></i> Kalkulator</h3>
+            <div class="calculator-display-container">
+                <input type="text" id="calculatorDisplay" readonly>
+            </div>
+            <div class="calculator-buttons">
+                <button onclick="appendToCalculatorDisplay('7')">7</button>
+                <button onclick="appendToCalculatorDisplay('8')">8</button>
+                <button onclick="appendToCalculatorDisplay('9')">9</button>
+                <button class="operator" onclick="appendToCalculatorDisplay('/')">÷</button>
+
+                <button onclick="appendToCalculatorDisplay('4')">4</button>
+                <button onclick="appendToCalculatorDisplay('5')">5</button>
+                <button onclick="appendToCalculatorDisplay('6')">6</button>
+                <button class="operator" onclick="appendToCalculatorDisplay('*')">×</button>
+
+                <button onclick="appendToCalculatorDisplay('1')">1</button>
+                <button onclick="appendToCalculatorDisplay('2')">2</button>
+                <button onclick="appendToCalculatorDisplay('3')">3</button>
+                <button class="operator" onclick="appendToCalculatorDisplay('-')">−</button>
+
+                <button onclick="appendToCalculatorDisplay('0')">0</button>
+                <button onclick="appendToCalculatorDisplay('.')">.</button>
+                <button class="operator danger" onclick="clearCalculatorDisplay()">C</button>
+                <button class="operator" onclick="appendToCalculatorDisplay('+')">+</button>
+
+                <button class="span-2" onclick="calculateResult()">=</button>
+                <button class="span-2 primary" onclick="applyCalculatorResult()">OK</button>
+            </div>
+            <div class="modal-buttons" style="margin-top: 15px;">
+                <button type="button" class="btn btn-outline" style="width:100%"
+                    onclick="closeModal('calculatorModal')">Tutup Kalkulator</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Toast -->
     <div id="notification" class="notification"></div>
 
@@ -1413,6 +1591,22 @@
                         console.error('Error parsing __firebase_config. Falling back to manual config.', e);
                         // Fallback to user's hardcoded config if __firebase_config is malformed
                         effectiveFirebaseConfig = {
+                            const firebaseConfig = {
+                                apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
+                                authDomain: "wmproject-9269a.firebaseapp.com",
+                                projectId: "wmproject-9269a",
+                                storageBucket: "wmproject-9269a.firebasestorage.app",
+                                messagingSenderId: "706043186227",
+                                appId: "1:706043186227:web:470bfa89aa78c68829e746",
+                                measurementId: "G-FW9JLPDVJS"
+                            };
+                        };
+                        console.warn('🔧 Using manual Firebase config as fallback due to __firebase_config parse error.');
+                    }
+                } else {
+                    // Fallback to user's hardcoded config if __firebase_config is not defined or is placeholder
+                    effectiveFirebaseConfig = {
+                        const firebaseConfig = {
                             apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
                             authDomain: "wmproject-9269a.firebaseapp.com",
                             projectId: "wmproject-9269a",
@@ -1421,18 +1615,6 @@
                             appId: "1:706043186227:web:470bfa89aa78c68829e746",
                             measurementId: "G-FW9JLPDVJS"
                         };
-                        console.warn('🔧 Using manual Firebase config as fallback due to __firebase_config parse error.');
-                    }
-                } else {
-                    // Fallback to user's hardcoded config if __firebase_config is not defined or is placeholder
-                    effectiveFirebaseConfig = {
-                        apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
-                        authDomain: "wmproject-9269a.firebaseapp.com",
-                        projectId: "wmproject-9269a",
-                        storageBucket: "wmproject-9269a.firebasestorage.app",
-                        messagingSenderId: "706043186227",
-                        appId: "1:706043186227:web:470bfa89aa78c68829e746",
-                        measurementId: "G-FW9JLPDVJS"
                     };
                     if (typeof __firebase_config === 'undefined') {
                         console.warn('🔧 __firebase_config not found. Using manual Firebase config placeholders. Please replace them with your actual Firebase project details.');
@@ -1483,6 +1665,7 @@
         let isOnline = navigator.onLine;
         let currentTransactionPage = 1;
         const transactionsPerPage = 10;
+        let calculatorTargetInputId = null; // To store the ID of the input field for the calculator
 
 
         // ===== CONNECTION STATUS UI =====
@@ -1533,6 +1716,7 @@
             }
 
             const currentApiKey = auth.app.options.apiKey;
+            // Check if using placeholder and no Canvas config
             if (currentApiKey === "YOUR_API_KEY" && typeof __firebase_config === 'undefined') {
                 console.warn("Firebase using hardcoded placeholder API key and no Canvas config. Ensure your Firebase config is correct if not using Canvas environment variables. Bypassing to dev mode.");
                 bypassLoginForDevelopment();
@@ -2474,6 +2658,89 @@
             closeModal('exportPDFModal');
         }
 
+        // ===== CALCULATOR LOGIC =====
+        let calculatorCurrentExpression = '';
+
+        function showCalculatorModal(targetId) {
+            calculatorTargetInputId = targetId;
+            document.getElementById('calculatorDisplay').value = ''; // Clear display
+            calculatorCurrentExpression = ''; // Clear expression
+            document.getElementById('calculatorModal').classList.add('show');
+            if (typeof feather !== 'undefined') feather.replace();
+        }
+
+        function appendToCalculatorDisplay(value) {
+            const display = document.getElementById('calculatorDisplay');
+            // Prevent multiple operators or leading operator (except minus)
+            const lastChar = calculatorCurrentExpression.slice(-1);
+            const operators = ['/', '*', '-', '+'];
+            if (operators.includes(value) && operators.includes(lastChar)) {
+                // Replace last operator if new one is different, or ignore if same
+                if (value !== lastChar) {
+                    calculatorCurrentExpression = calculatorCurrentExpression.slice(0, -1) + value;
+                }
+            } else if (operators.includes(value) && calculatorCurrentExpression === '' && value !== '-') {
+                // Prevent leading operator other than minus
+                return;
+            }
+            else {
+                calculatorCurrentExpression += value;
+            }
+            display.value = calculatorCurrentExpression;
+        }
+
+        function clearCalculatorDisplay() {
+            calculatorCurrentExpression = '';
+            document.getElementById('calculatorDisplay').value = '';
+        }
+
+        function calculateResult() {
+            const display = document.getElementById('calculatorDisplay');
+            try {
+                // Basic sanitization: remove anything not a digit, operator, or decimal point.
+                let sanitizedExpression = calculatorCurrentExpression.replace(/[^-()\d/*+.]/g, '');
+                if (sanitizedExpression === '') {
+                    display.value = '0';
+                    calculatorCurrentExpression = '0';
+                    return;
+                }
+                // Using Function constructor for safer evaluation than direct eval()
+                let result = new Function('return ' + sanitizedExpression)();
+                if (isNaN(result) || !isFinite(result)) {
+                    throw new Error("Invalid calculation");
+                }
+                display.value = result;
+                calculatorCurrentExpression = result.toString();
+            } catch (error) {
+                display.value = 'Error';
+                calculatorCurrentExpression = '';
+                console.error("Calculator error:", error);
+            }
+        }
+
+        function applyCalculatorResult() {
+            const display = document.getElementById('calculatorDisplay');
+            // Ensure calculation is done if user presses OK without pressing =
+            if (calculatorCurrentExpression !== display.value) { // If display was manually changed or = was not pressed
+                calculateResult(); // Calculate first
+                if (display.value === 'Error') { // If calculation resulted in error
+                    showNotification("Hasil kalkulator tidak valid.", "error");
+                    return;
+                }
+            }
+
+            const result = parseFloat(display.value);
+            if (!isNaN(result) && calculatorTargetInputId) {
+                const targetInput = document.getElementById(calculatorTargetInputId);
+                if (targetInput) {
+                    targetInput.value = result; // Set raw number
+                    formatAmountInput(targetInput); // Then format it
+                }
+            }
+            closeModal('calculatorModal');
+        }
+
+
         // ===== DRAWER/SIDEBAR TOGGLE LOGIC =====
         function toggleDrawer() {
             const sidebar = document.getElementById('sidebar');
@@ -2529,7 +2796,8 @@
 
             window.addEventListener('click', function (event) {
                 document.querySelectorAll('.modal.show').forEach(modal => {
-                    if (event.target == modal) {
+                    // Close modal only if the click is on the backdrop itself, not on its content
+                    if (event.target == modal && modal.id !== 'calculatorModal') { // Prevent calculator from closing on backdrop click for now
                         closeModal(modal.id);
                     }
                 });
