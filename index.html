@@ -1591,22 +1591,6 @@
                         console.error('Error parsing __firebase_config. Falling back to manual config.', e);
                         // Fallback to user's hardcoded config if __firebase_config is malformed
                         effectiveFirebaseConfig = {
-                            const firebaseConfig = {
-                                apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
-                                authDomain: "wmproject-9269a.firebaseapp.com",
-                                projectId: "wmproject-9269a",
-                                storageBucket: "wmproject-9269a.firebasestorage.app",
-                                messagingSenderId: "706043186227",
-                                appId: "1:706043186227:web:470bfa89aa78c68829e746",
-                                measurementId: "G-FW9JLPDVJS"
-                            };
-                        };
-                        console.warn('🔧 Using manual Firebase config as fallback due to __firebase_config parse error.');
-                    }
-                } else {
-                    // Fallback to user's hardcoded config if __firebase_config is not defined or is placeholder
-                    effectiveFirebaseConfig = {
-                        const firebaseConfig = {
                             apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
                             authDomain: "wmproject-9269a.firebaseapp.com",
                             projectId: "wmproject-9269a",
@@ -1615,6 +1599,18 @@
                             appId: "1:706043186227:web:470bfa89aa78c68829e746",
                             measurementId: "G-FW9JLPDVJS"
                         };
+                        console.warn('🔧 Using manual Firebase config as fallback due to __firebase_config parse error.');
+                    }
+                } else {
+                    // Fallback to user's hardcoded config if __firebase_config is not defined or is placeholder
+                    effectiveFirebaseConfig = {
+                        apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
+                        authDomain: "wmproject-9269a.firebaseapp.com",
+                        projectId: "wmproject-9269a",
+                        storageBucket: "wmproject-9269a.firebasestorage.app",
+                        messagingSenderId: "706043186227",
+                        appId: "1:706043186227:web:470bfa89aa78c68829e746",
+                        measurementId: "G-FW9JLPDVJS"
                     };
                     if (typeof __firebase_config === 'undefined') {
                         console.warn('🔧 __firebase_config not found. Using manual Firebase config placeholders. Please replace them with your actual Firebase project details.');
