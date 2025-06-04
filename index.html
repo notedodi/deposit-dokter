@@ -1120,7 +1120,7 @@
         <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
                 <i data-feather="gitlab" style="color: var(--primary-color); width:28px; height:28px;"></i>
-                <h1>WINGMAN</h1>
+                <h1>WINGMAN!</h1>
             </div>
 
             <p class="sidebar-title">Manajemen Dokter</p>
@@ -1405,7 +1405,7 @@
                 let effectiveFirebaseConfig;
 
                 // Try to use Canvas-provided config first
-                if (typeof __firebase_config !== 'undefined') {
+                if (typeof __firebase_config !== 'undefined' && __firebase_config.trim() !== "" && __firebase_config !== "YOUR_FIREBASE_CONFIG_JSON_STRING") {
                     try {
                         effectiveFirebaseConfig = JSON.parse(__firebase_config);
                         console.log('🔧 Using Firebase config provided by Canvas environment.');
@@ -1413,28 +1413,32 @@
                         console.error('Error parsing __firebase_config. Falling back to manual config.', e);
                         // Fallback to user's hardcoded config if __firebase_config is malformed
                         effectiveFirebaseConfig = {
-                            apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc", // GANTI DENGAN API KEY ANDA
-                            authDomain: "wmproject-9269a.firebaseapp.com", // GANTI DENGAN AUTH DOMAIN ANDA
-                            projectId: "wmproject-9269a", // GANTI DENGAN PROJECT ID ANDA
-                            storageBucket: "wmproject-9269a.appspot.com",
-                            messagingSenderId: "706043186227", // GANTI DENGAN SENDER ID ANDA
-                            appId: "1:706043186227:web:470bfa89aa78c68829e746", // GANTI DENGAN APP ID ANDA
-                            measurementId: "G-FW9JLPDVJS" // OPSIONAL, JIKA MENGGUNAKAN ANALYTICS
+                            apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
+                            authDomain: "wmproject-9269a.firebaseapp.com",
+                            projectId: "wmproject-9269a",
+                            storageBucket: "wmproject-9269a.firebasestorage.app",
+                            messagingSenderId: "706043186227",
+                            appId: "1:706043186227:web:470bfa89aa78c68829e746",
+                            measurementId: "G-FW9JLPDVJS"
                         };
                         console.warn('🔧 Using manual Firebase config as fallback due to __firebase_config parse error.');
                     }
                 } else {
-                    // Fallback to user's hardcoded config if __firebase_config is not defined
+                    // Fallback to user's hardcoded config if __firebase_config is not defined or is placeholder
                     effectiveFirebaseConfig = {
-                        apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc", // GANTI DENGAN API KEY ANDA
-                        authDomain: "wmproject-9269a.firebaseapp.com", // GANTI DENGAN AUTH DOMAIN ANDA
-                        projectId: "wmproject-9269a", // GANTI DENGAN PROJECT ID ANDA
-                        storageBucket: "wmproject-9269a.appspot.com",
-                        messagingSenderId: "706043186227", // GANTI DENGAN SENDER ID ANDA
-                        appId: "1:706043186227:web:470bfa89aa78c68829e746", // GANTI DENGAN APP ID ANDA
-                        measurementId: "G-FW9JLPDVJS" // OPSIONAL
+                        apiKey: "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc",
+                        authDomain: "wmproject-9269a.firebaseapp.com",
+                        projectId: "wmproject-9269a",
+                        storageBucket: "wmproject-9269a.firebasestorage.app",
+                        messagingSenderId: "706043186227",
+                        appId: "1:706043186227:web:470bfa89aa78c68829e746",
+                        measurementId: "G-FW9JLPDVJS"
                     };
-                    console.warn('🔧 __firebase_config not found. Using manual Firebase config. Custom token auth might fail if this project differs from Canvas environment.');
+                    if (typeof __firebase_config === 'undefined') {
+                        console.warn('🔧 __firebase_config not found. Using manual Firebase config placeholders. Please replace them with your actual Firebase project details.');
+                    } else {
+                        console.warn('🔧 __firebase_config seems to be a placeholder. Using manual Firebase config placeholders. Please replace them with your actual Firebase project details.');
+                    }
                 }
 
 
@@ -1447,15 +1451,18 @@
                     }
                     auth = firebase.auth();
                     db = firebase.firestore();
-                    db.enablePersistence().catch((err) => {
-                        if (err.code == 'failed-precondition') {
-                            console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-                        } else if (err.code == 'unimplemented') {
-                            console.warn('The current browser does not support all of the features required to enable persistence.');
-                        } else {
-                            console.log('Offline persistence error:', err.code);
-                        }
-                    });
+                    // Attempt to enable persistence, log errors if any.
+                    db.enablePersistence({ synchronizeTabs: true }) // synchronizeTabs can help in multi-tab scenarios
+                        .then(() => console.log("Offline persistence enabled."))
+                        .catch((err) => {
+                            if (err.code == 'failed-precondition') {
+                                console.warn('Offline persistence failed: Multiple tabs open or other issues. Persistence can only be enabled in one tab at a time.');
+                            } else if (err.code == 'unimplemented') {
+                                console.warn('Offline persistence failed: The current browser does not support all of the features required to enable persistence.');
+                            } else {
+                                console.warn('Offline persistence error:', err.code, err.message);
+                            }
+                        });
                     console.log('🔥 Firebase initialized successfully with project ID:', effectiveFirebaseConfig.projectId);
                 } catch (error) {
                     console.error('Firebase initialization error:', error);
@@ -1518,14 +1525,15 @@
 
         // ===== AUTHENTICATION LOGIC =====
         async function initAuth() {
-            if (!firebaseAvailable || !auth) { // Check if auth is initialized
+            if (!firebaseAvailable || !auth) {
                 console.warn("Firebase auth is not available. Bypassing to dev mode.");
                 bypassLoginForDevelopment();
                 hideLoadingScreen();
                 return;
             }
-            // Check if the API key is a placeholder, indicating manual config might be needed by user
-            if (auth.app.options.apiKey === "AIzaSyCDDmHhlwcjgBArmvXiaTnjgKqGHIi3DHc" && typeof __firebase_config === 'undefined') {
+
+            const currentApiKey = auth.app.options.apiKey;
+            if (currentApiKey === "YOUR_API_KEY" && typeof __firebase_config === 'undefined') {
                 console.warn("Firebase using hardcoded placeholder API key and no Canvas config. Ensure your Firebase config is correct if not using Canvas environment variables. Bypassing to dev mode.");
                 bypassLoginForDevelopment();
                 hideLoadingScreen();
@@ -1682,7 +1690,7 @@
 
             try {
                 showSyncStatus();
-                console.log(`Attempting to load data for UID: ${currentUser.uid}, Is Anonymous: ${currentUser.isAnonymous}`);
+                console.log(`Attempting to load data for UID: ${currentUser.uid}, Is Anonymous: ${currentUser.isAnonymous}. Project ID: ${auth.app.options.projectId}`);
                 const userDocRef = db.collection('users').doc(currentUser.uid);
                 const docSnapshot = await userDocRef.get();
                 if (docSnapshot.exists) {
@@ -1704,10 +1712,10 @@
                     selectDoctor(null);
                 }
             } catch (error) {
-                console.error(`Error loading user data from Firestore for UID: ${currentUser.uid}:`, error);
+                console.error(`Error loading user data from Firestore for UID: ${currentUser.uid} on Project ID: ${auth.app.options.projectId}:`, error);
                 let errorMsg = '❌ Gagal memuat data pengguna dari cloud.';
                 if (error.code === 'permission-denied' || (error.message && error.message.toLowerCase().includes("missing or insufficient permissions"))) {
-                    errorMsg = '❌ Gagal memuat data: Izin ditolak. Pastikan aturan keamanan Firestore Anda mengizinkan akses untuk pengguna yang terautentikasi (termasuk anonim jika digunakan).';
+                    errorMsg = `❌ Gagal memuat data: Izin ditolak untuk UID ${currentUser.uid} pada proyek ${auth.app.options.projectId}. Pastikan aturan keamanan Firestore Anda mengizinkan akses.`;
                     console.error("Firestore permission error details:", error.details || "No details provided by Firebase error object.");
                 } else {
                     errorMsg += ` (${error.message || error.code || 'Unknown error'})`;
@@ -1736,7 +1744,7 @@
             }
             try {
                 showSyncStatus();
-                console.log(`Attempting to save data for UID: ${currentUser.uid}`);
+                console.log(`Attempting to save data for UID: ${currentUser.uid} on Project ID: ${auth.app.options.projectId}`);
                 const userDocRef = db.collection('users').doc(currentUser.uid);
                 const now = new Date();
                 doctors.forEach(doctor => {
@@ -1748,10 +1756,10 @@
                 await userDocRef.set({ doctors: doctors, lastUpdated: now.toISOString() }, { merge: true });
                 console.log('Data saved successfully to Firebase.');
             } catch (error) {
-                console.error(`Error saving data to Firestore for UID: ${currentUser.uid}:`, error);
+                console.error(`Error saving data to Firestore for UID: ${currentUser.uid} on Project ID: ${auth.app.options.projectId}:`, error);
                 let errorMsg = '⚠️ Gagal menyimpan data ke cloud.';
                 if (error.code === 'permission-denied' || (error.message && error.message.toLowerCase().includes("missing or insufficient permissions"))) {
-                    errorMsg = '❌ Gagal menyimpan data: Izin ditolak. Pastikan aturan keamanan Firestore Anda mengizinkan penulisan untuk pengguna yang terautentikasi.';
+                    errorMsg = `❌ Gagal menyimpan data: Izin ditolak untuk UID ${currentUser.uid} pada proyek ${auth.app.options.projectId}. Pastikan aturan keamanan Firestore Anda mengizinkan penulisan.`;
                 } else {
                     errorMsg += ` (${error.message || error.code || 'Unknown error'})`;
                 }
@@ -1765,7 +1773,7 @@
             notification.textContent = message;
             notification.className = 'notification ' + type;
             notification.classList.add('show');
-            setTimeout(() => { notification.classList.remove('show'); }, 4000);
+            setTimeout(() => { notification.classList.remove('show'); }, 5000); // Longer display for errors
         }
 
         function formatCurrency(amount) {
@@ -1795,10 +1803,10 @@
         function formatDate(dateString) {
             if (!dateString) return 'N/A';
             try {
-                // Ensure the date string is in a format that Date constructor can parse reliably, e.g., YYYY-MM-DD
+                // Ensure the date string is in a format that Date constructor can parse reliably, e.g.,<y_bin_46>-MM-DD
                 const parts = dateString.split('-');
                 if (parts.length === 3) {
-                    // Assuming YYYY-MM-DD or similar that Date can parse
+                    // Assuming<y_bin_46>-MM-DD or similar that Date can parse
                     return new Date(dateString).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
                 }
                 // If not in expected format, try parsing directly (might be less reliable)
