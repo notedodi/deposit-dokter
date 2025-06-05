@@ -1562,10 +1562,14 @@
                             <select id="sortTransaksi">
                                 <option value="date-desc">Tanggal Terbaru</option>
                                 <option value="date-asc">Tanggal Terlama</option>
-                                <option value="created-desc">Waktu Pembuatan</option>
-                                <option value="created-asc">Waktu Pembuatan</option>
+                                <option value="created-desc">Waktu Pembuatan (Terbaru)</option>
+                                <option value="created-asc">Waktu Pembuatan (Terlama)</option>
                                 <option value="amount-desc">Jumlah Terbesar</option>
                                 <option value="amount-asc">Jumlah Terkecil</option>
+                                <!--
+                                <option value="keterangan-asc">Keterangan A-Z</option>
+                                <option value="keterangan-desc">Keterangan Z-A</option>
+                                 -->
                             </select>
                         </div>
                     </div>
@@ -2754,7 +2758,7 @@
 
         async function addDeposit() {
             const amount = unformatNumber(document.getElementById('additionalDeposit').value);
-            const description = document.getElementById('depositDesc').value.trim() || 'Tambah Deposit Rutin';
+            const description = document.getElementById('depositDesc').value.trim() || 'Tambah Deposit';
 
             if (!amount || amount <= 0) {
                 showNotification('❌ Jumlah deposit tidak valid atau kosong.', 'error');
@@ -2861,7 +2865,7 @@
                 hintElement.style.color = 'var(--red)';
                 nameInput.style.borderColor = 'var(--red)';
             } else {
-                hintElement.textContent = 'Nama tersedia ✓';
+                hintElement.textContent = 'Nama Tersedia';
                 hintElement.style.color = 'var(--green)';
                 nameInput.style.borderColor = 'var(--green)';
             }
