@@ -1996,7 +1996,7 @@
                             }
                         } catch (error) {
                             console.error('Error during initial auto-sign-in (custom/anonymous):', error);
-                            let specificErrorMsg = 'Gagal memulai sesi otomatis. Beberapa fitur mungkin tidak berfungsi normal.';
+                            let specificErrorMsg = 'Silahkan login terlebih dahulu.';
                             if (error.code === 'auth/custom-token-mismatch') {
                                 specificErrorMsg = 'Gagal memulai sesi: Token tidak cocok dengan proyek Firebase. Pastikan konfigurasi Firebase (apiKey, projectId, dll.) sesuai dengan token yang digunakan.';
                                 console.warn('Custom token audience (project) might not match the Firebase project initialized by the SDK. Effective project ID:', auth.app.options.projectId);
