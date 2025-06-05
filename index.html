@@ -226,7 +226,8 @@
         }
 
         .sidebar-header {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            /* Adjusted margin */
             display: flex;
             align-items: center;
             gap: 10px;
@@ -249,78 +250,102 @@
             /* Slight indent for title */
         }
 
-        #doctorList {
-            list-style: none;
+        /* Dokter Dropdown Styles */
+        .dokter-dropdown-container {
+            position: relative;
             margin-bottom: 20px;
-            flex-grow: 1;
-            /* Allows list to take available space */
+        }
+
+        .dokter-dropdown-active {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .dokter-dropdown-active i {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .dokter-dropdown-active.open i {
+            transform: rotate(180deg);
+        }
+
+        .dokter-dropdown-list-wrapper {
+            display: none;
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            right: 0;
+            /* This makes it take full width of parent */
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            padding: 10px;
+            max-height: 300px;
+            /* For scrollability */
+        }
+
+        .dokter-dropdown-list-wrapper.open {
+            display: block;
+        }
+
+        #dokterSearchInput {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        #doctorList {
+            /* Re-styled for dropdown context */
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-height: 200px;
+            /* Max height before scroll */
             overflow-y: auto;
-            /* Scroll if many doctors */
         }
 
         #doctorList li {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 4px;
-            /* Space between items */
+            padding: 10px;
+            border-radius: 6px;
         }
 
-        #doctorList li:hover {
+        #doctorList li:hover,
+        #doctorList li.highlighted {
             background-color: #f8fafc;
-            /* Light hover for non-active items */
             color: var(--primary-color);
         }
 
-        #doctorList li.active {
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
-            /* Shadow for active item */
+        #doctorList li.active-selection {
+            /* For the currently selected doctor IN THE DROPDOWN, not the global active doctor */
+            background-color: var(--primary-color) !important;
+            color: white !important;
         }
 
-        #doctorList li.active i {
-            stroke: white;
-            /* Ensure icon color matches text */
-        }
-
-        /* Styling for empty doctor list state */
         #doctorList .doctor-list-empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            color: var(--text-secondary);
-            opacity: 0.8;
-            cursor: default;
-            /* Not clickable */
-            border: 1px dashed var(--border-color);
-            border-radius: 8px;
-            margin: 10px 0;
-            /* Add some margin */
-            min-height: 100px;
-            /* Ensure it has some height */
+            /* Adjusted for dropdown */
+            padding: 10px;
+            font-size: 0.85rem;
+            border: none;
+            min-height: auto;
         }
 
         #doctorList .doctor-list-empty-state i {
-            width: 32px;
-            height: 32px;
-            margin-bottom: 12px;
+            display: none;
         }
 
-        #doctorList .doctor-list-empty-state span {
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
+        /* Hide icon in dropdown empty state */
 
         .sidebar-actions {
             margin-top: auto;
@@ -671,6 +696,52 @@
             color: var(--primary-color);
         }
 
+        /* Transaction Filters */
+        .filter-controls-header {
+            display: flex;
+            justify-content: flex-end;
+            /* Aligns button to the right */
+            margin-bottom: 10px;
+        }
+
+        #toggleFilterBtn {
+            /* Using existing .btn and .btn-outline styles, can be more specific if needed */
+        }
+
+        .transaction-filters {
+            display: none;
+            /* Hidden by default */
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .transaction-filters.open {
+            display: flex;
+            /* Show when .open class is added */
+        }
+
+        .transaction-filters .form-group {
+            margin-bottom: 0;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .transaction-filters label {
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+
+        .transaction-filters input,
+        .transaction-filters select {
+            padding: 8px 10px;
+            font-size: 0.9rem;
+        }
+
 
         /* ===== TRANSACTIONS TABLE ===== */
         .transactions-card {
@@ -678,7 +749,8 @@
             padding: 24px;
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            margin-top: 24px;
+            margin-top: 0;
+            /* Removed margin-top as filters are now above */
         }
 
         .section-header {
@@ -817,6 +889,29 @@
             width: 14px;
             height: 14px;
         }
+
+        /* Transaction Summary Totals */
+        .transaction-summary {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        .transaction-summary div {
+            font-size: 0.95rem;
+        }
+
+        .summary-income {
+            color: var(--green);
+        }
+
+        .summary-expense {
+            color: var(--red);
+        }
+
 
         /* Pagination Styles */
         .pagination-controls {
@@ -1086,6 +1181,12 @@
                 /* Reset min-width */
             }
 
+            /* REMOVED specific width for .dokter-dropdown-list-wrapper on mobile */
+            /* .dokter-dropdown-list-wrapper {
+                width: calc(100% - 48px); /* Adjust width within sidebar padding */
+            /* } */
+
+
             .main-content {
                 padding: 20px;
             }
@@ -1109,6 +1210,22 @@
             .sidebar-actions #logoutBtnSidebar {
                 display: inline-flex;
                 /* Show sidebar logout button when sidebar is open (mobile) */
+            }
+
+            .transaction-filters {
+                flex-direction: column;
+                /* Stack filters on smaller screens */
+            }
+
+            .transaction-filters .form-group {
+                min-width: 100%;
+                /* Full width for filter items on stack */
+                margin-bottom: 10px;
+                /* Add margin back when stacked */
+            }
+
+            .transaction-filters .form-group:last-child {
+                margin-bottom: 0;
             }
         }
 
@@ -1208,7 +1325,11 @@
                 font-size: 1.1rem;
             }
 
-
+            .transaction-summary {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -1242,16 +1363,26 @@
         <!-- Sidebar / Drawer -->
         <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
-                <i data-feather="gitlab" style="color: var(--primary-color); width:28px; height:28px;"></i>
-                <h1>WINGMAN!</h1>
+                <i data-feather="github" style="color: var(--primary-color); width:28px; height:28px;"></i>
+                <h1>WINGMAN</h1>
             </div>
 
-            <p class="sidebar-title">Manajemen Dokter</p>
-            <ul id="doctorList">
-                <!-- Doctor list will be populated by JavaScript -->
-            </ul>
+            <p class="sidebar-title">Pilih Dokter</p>
+            <div class="dokter-dropdown-container">
+                <div id="dokterDropdownActive" class="dokter-dropdown-active">
+                    <span id="activeDokterName">Pilih Dokter...</span>
+                    <i data-feather="chevron-down"></i>
+                </div>
+                <div id="dokterDropdownListWrapper" class="dokter-dropdown-list-wrapper">
+                    <input type="text" id="dokterSearchInput" placeholder="Cari dokter...">
+                    <ul id="doctorList">
+                        <!-- Doctor list will be populated by JavaScript -->
+                    </ul>
+                </div>
+            </div>
+
             <div class="sidebar-actions">
-                <button class="btn btn-primary" onclick="showAddDoctorModal()">
+                <button class="btn btn-primary" id="addDoctorSidebarBtn">
                     <i data-feather="plus-circle"></i> Tambah Dokter Baru
                 </button>
                 <button class="btn btn-danger" onclick="showDeleteDoctorModal()" id="deleteDoctorBtn">
@@ -1323,6 +1454,37 @@
                     </button>
                 </div>
 
+                <!-- Filter Controls Header -->
+                <div class="filter-controls-header">
+                    <button id="toggleFilterBtn" class="btn btn-outline btn-sm">
+                        <i data-feather="filter"></i> <span>Tampilkan Filter</span>
+                    </button>
+                </div>
+                <!-- Transaction Filters -->
+                <div id="transactionFilters" class="transaction-filters">
+                    <div class="form-group">
+                        <label for="searchKeterangan">Cari Keterangan</label>
+                        <input type="text" id="searchKeterangan" placeholder="Contoh: Beli makan...">
+                    </div>
+                    <div class="form-group">
+                        <label for="filterTanggalMulai">Tanggal Mulai</label>
+                        <input type="date" id="filterTanggalMulai">
+                    </div>
+                    <div class="form-group">
+                        <label for="filterTanggalAkhir">Tanggal Akhir</label>
+                        <input type="date" id="filterTanggalAkhir">
+                    </div>
+                    <div class="form-group">
+                        <label for="filterJenisTransaksi">Jenis Transaksi</label>
+                        <select id="filterJenisTransaksi">
+                            <option value="semua">Semua Jenis</option>
+                            <option value="income">Pemasukan</option>
+                            <option value="expense">Pengeluaran</option>
+                        </select>
+                    </div>
+                </div>
+
+
                 <!-- Transactions Table Card -->
                 <div id="transactionsSection" class="transactions-card">
                     <div class="section-header">
@@ -1330,6 +1492,10 @@
                     </div>
                     <div id="transactionsTable">
                         <!-- Table or empty state for transactions will be rendered here by JavaScript -->
+                    </div>
+                    <div id="transactionSummary" class="transaction-summary">
+                        <div id="summaryIncome" class="summary-income">Total Pemasukan (Filter): Rp 0</div>
+                        <div id="summaryExpense" class="summary-expense">Total Pengeluaran (Filter): Rp 0</div>
                     </div>
                     <div id="paginationControls" class="pagination-controls">
                         <!-- Pagination buttons will be rendered here -->
@@ -1486,8 +1652,8 @@
             <div class="form-group">
                 <label for="exportType">Pilih Data untuk Diexport:</label>
                 <select id="exportType" class="form-group input"> <!-- Ensure class is applied -->
-                    <option value="all">Semua Transaksi Dokter Ini</option>
-                    <option value="range">Transaksi Berdasarkan Rentang Tanggal</option>
+                    <option value="all">Semua Transaksi</option>
+                    <option value="range">Transaksi Berdasarkan Tanggal</option>
                 </select>
             </div>
             <div id="dateRangeGroup" style="display: none;">
@@ -1660,8 +1826,9 @@
         let currentEditingTransactionId = null; // For editing transactions
         let isOnline = navigator.onLine;
         let currentTransactionPage = 1;
-        const transactionsPerPage = 10;
+        const transactionsPerPage = 7; // Updated to 7
         let calculatorTargetInputId = null; // To store the ID of the input field for the calculator
+        let currentFilteredTransactions = []; // Store all filtered transactions before pagination
 
 
         // ===== CONNECTION STATUS UI =====
@@ -1777,7 +1944,8 @@
             };
             doctors = [];
             showMainApp();
-            loadDoctors();
+            populateDoctorDropdown();
+            selectDoctor(null);
             showNotification('🔧 Mode Development Aktif. Data tidak disimpan ke Firebase.', 'info');
         }
 
@@ -1826,9 +1994,14 @@
         async function signOut() {
             if (!firebaseAvailable || !auth || (currentUser && currentUser.uid === 'dev-user-123')) {
                 currentUser = null;
-                initialAuthAttempted = false;
+                initialAuthAttempted = false; // Reset flag to allow re-auth attempt on next load if applicable
                 showLoginScreen();
                 showNotification('ℹ️ Anda telah keluar dari mode development.', 'info');
+                // Reset app state
+                doctors = [];
+                currentDoctorId = null;
+                populateDoctorDropdown();
+                selectDoctor(null); // This will ensure UI is reset for no doctor
                 return;
             }
             try {
@@ -1836,9 +2009,9 @@
                 showNotification('ℹ️ Anda telah berhasil keluar.', 'info');
                 currentDoctorId = null;
                 doctors = [];
-                loadDoctors();
+                populateDoctorDropdown();
                 selectDoctor(null);
-                initialAuthAttempted = false;
+                initialAuthAttempted = false; // Allow re-auth (e.g. anonymous) on next load if needed
             } catch (error) {
                 showNotification('❌ Gagal keluar: ' + error.message, 'error');
             }
@@ -1848,12 +2021,12 @@
         async function loadUserData() {
             if (!currentUser || !currentUser.uid) {
                 console.warn("loadUserData called but currentUser or currentUser.uid is not available. Current user:", currentUser);
-                selectDoctor(null);
+                selectDoctor(null); // Ensure UI reflects no user/no data state
                 return;
             }
             if (!firebaseAvailable && currentUser.uid === 'dev-user-123') {
                 console.log('🔧 Dev mode: Using in-memory data for doctors.');
-                loadDoctors();
+                populateDoctorDropdown();
                 if (doctors.length > 0) {
                     selectDoctor(doctors[0].id);
                 } else {
@@ -1865,6 +2038,7 @@
             if (!db) {
                 console.error("Firestore database instance (db) is not available.");
                 showNotification("❌ Database tidak tersedia. Tidak dapat memuat data.", "error");
+                selectDoctor(null); // Reflect error state in UI
                 return;
             }
 
@@ -1874,7 +2048,14 @@
                 const userDocRef = db.collection('users').doc(currentUser.uid);
                 const docSnapshot = await userDocRef.get();
                 if (docSnapshot.exists) {
-                    doctors = docSnapshot.data().doctors || [];
+                    const data = docSnapshot.data();
+                    doctors = Array.isArray(data.doctors) ? data.doctors : [];
+                    // Ensure each doctor has a transactions array
+                    doctors.forEach(doc => {
+                        if (!Array.isArray(doc.transactions)) {
+                            doc.transactions = [];
+                        }
+                    });
                     console.log(`Data loaded for UID: ${currentUser.uid}. Number of doctors: ${doctors.length}`);
                 } else {
                     doctors = [];
@@ -1885,9 +2066,20 @@
                         console.log("New anonymous session, no existing data to load, this is expected.");
                     }
                 }
-                loadDoctors();
+                populateDoctorDropdown();
                 if (doctors.length > 0) {
-                    selectDoctor(doctors[0].id);
+                    const currentDoctorStillExists = doctors.some(d => d.id === currentDoctorId);
+                    if (!currentDoctorId || !currentDoctorStillExists) {
+                        // Try to restore last selected doctor, or default to first
+                        const lastSelectedDoctorId = localStorage.getItem(`lastSelectedDoctor_${currentUser.uid}`);
+                        if (lastSelectedDoctorId && doctors.some(d => d.id == lastSelectedDoctorId)) {
+                            selectDoctor(lastSelectedDoctorId);
+                        } else {
+                            selectDoctor(doctors[0].id);
+                        }
+                    } else {
+                        selectDoctor(currentDoctorId);
+                    }
                 } else {
                     selectDoctor(null);
                 }
@@ -1901,9 +2093,9 @@
                     errorMsg += ` (${error.message || error.code || 'Unknown error'})`;
                 }
                 showNotification(errorMsg, 'error');
-                doctors = [];
-                loadDoctors();
-                selectDoctor(null);
+                doctors = []; // Reset doctors on error
+                populateDoctorDropdown();
+                selectDoctor(null); // Ensure UI reflects error state
             }
         }
 
@@ -1915,6 +2107,8 @@
             }
             if (!firebaseAvailable && currentUser.uid === 'dev-user-123') {
                 console.log('🔧 Dev mode or no user: Skipping Firebase save.');
+                // For dev mode, we might want to simulate save or log current state
+                console.log('Current doctors (dev mode):', JSON.parse(JSON.stringify(doctors)));
                 return;
             }
             if (!db) {
@@ -1926,14 +2120,16 @@
                 showSyncStatus();
                 console.log(`Attempting to save data for UID: ${currentUser.uid} on Project ID: ${auth.app.options.projectId}`);
                 const userDocRef = db.collection('users').doc(currentUser.uid);
-                const now = new Date();
-                doctors.forEach(doctor => {
-                    doctor.updatedAt = now.toISOString();
-                    if (!doctor.createdAt) {
-                        doctor.createdAt = now.toISOString();
-                    }
-                });
-                await userDocRef.set({ doctors: doctors, lastUpdated: now.toISOString() }, { merge: true });
+                const now = new Date().toISOString();
+                // Ensure transactions are arrays
+                const doctorsToSave = doctors.map(doc => ({
+                    ...doc,
+                    transactions: Array.isArray(doc.transactions) ? doc.transactions : [],
+                    updatedAt: now,
+                    createdAt: doc.createdAt || now
+                }));
+
+                await userDocRef.set({ doctors: doctorsToSave, lastUpdated: now }, { merge: true });
                 console.log('Data saved successfully to Firebase.');
             } catch (error) {
                 console.error(`Error saving data to Firestore for UID: ${currentUser.uid} on Project ID: ${auth.app.options.projectId}:`, error);
@@ -1953,7 +2149,7 @@
             notification.textContent = message;
             notification.className = 'notification ' + type;
             notification.classList.add('show');
-            setTimeout(() => { notification.classList.remove('show'); }, 5000); // Longer display for errors
+            setTimeout(() => { notification.classList.remove('show'); }, 5000);
         }
 
         function formatCurrency(amount) {
@@ -1983,20 +2179,30 @@
         function formatDate(dateString) {
             if (!dateString) return 'N/A';
             try {
-                // Ensure the date string is in a format that Date constructor can parse reliably, e.g.,<y_bin_46>-MM-DD
-                const parts = dateString.split('-');
-                if (parts.length === 3) {
-                    // Assuming<y_bin_46>-MM-DD or similar that Date can parse
-                    return new Date(dateString).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                const date = new Date(dateString);
+                // Check if the date is valid after parsing
+                if (isNaN(date.getTime())) {
+                    // Try to parse as yyyy-MM-dd if it failed (common for date inputs)
+                    const parts = dateString.split('-');
+                    if (parts.length === 3) {
+                        const year = parseInt(parts[0], 10);
+                        const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+                        const day = parseInt(parts[2], 10);
+                        const constructedDate = new Date(year, month, day);
+                        if (!isNaN(constructedDate.getTime())) {
+                            return constructedDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                        }
+                    }
+                    console.warn("Invalid date string provided:", dateString);
+                    return dateString; // Return original if parsing fails
                 }
-                // If not in expected format, try parsing directly (might be less reliable)
-                return new Date(dateString).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-
+                return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
             } catch (e) {
                 console.warn("Error formatting date:", dateString, e);
-                return dateString;
+                return dateString; // Return original on error
             }
         }
+
 
         function setTodayDate(elementId) {
             const today = new Date().toISOString().split('T')[0];
@@ -2004,107 +2210,248 @@
             if (dateInput) dateInput.value = today;
         }
 
-        // ===== DOCTOR MANAGEMENT (ADAPTED FOR NEW UI) =====
-        function loadDoctors() {
+        // ===== DOCTOR MANAGEMENT (Adapted for Dropdown UI) =====
+        function populateDoctorDropdown(searchTerm = '') {
             const listElement = document.getElementById('doctorList');
-            listElement.innerHTML = '';
+            listElement.innerHTML = ''; // Clear previous items
 
-            if (doctors.length === 0) {
+            const filteredDoctors = doctors.filter(doc =>
+                doc.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (filteredDoctors.length === 0) {
                 listElement.innerHTML = `
                     <li class="doctor-list-empty-state">
-                        <i data-feather="users"></i>
-                        <span>Belum ada dokter terdaftar.<br>Silakan tambahkan dokter baru.</span>
+                        <span>${searchTerm ? 'Dokter tidak ditemukan.' : (doctors.length === 0 ? 'Belum ada dokter.' : 'Tidak ada dokter yang cocok.')}</span>
                     </li>`;
-                if (typeof feather !== 'undefined') feather.replace();
-                return;
+            } else {
+                filteredDoctors.forEach(doctor => {
+                    const li = document.createElement('li');
+                    li.setAttribute('data-id', doctor.id);
+                    li.textContent = doctor.name;
+                    if (doctor.id == currentDoctorId) { // Use == for type coercion if IDs might be numbers/strings
+                        li.classList.add('active-selection');
+                    }
+                    li.onclick = () => {
+                        selectDoctor(doctor.id);
+                        closeDoctorDropdown();
+                    }
+                    listElement.appendChild(li);
+                });
             }
-
-            doctors.forEach(doctor => {
-                const li = document.createElement('li');
-                li.setAttribute('data-id', doctor.id);
-                li.onclick = () => {
-                    selectDoctor(doctor.id);
-                    closeDrawer(); // Close drawer after selecting a doctor on mobile
-                }
-                li.innerHTML = `<i data-feather="user"></i> <span class="doctor-name-sidebar">${doctor.name}</span>`;
-                listElement.appendChild(li);
-            });
-            if (typeof feather !== 'undefined') feather.replace();
+            // Feather icons replacement might not be needed here unless icons are added to list items
         }
 
+
+        function toggleDoctorDropdown() {
+            const wrapper = document.getElementById('dokterDropdownListWrapper');
+            const activeEl = document.getElementById('dokterDropdownActive');
+            wrapper.classList.toggle('open');
+            activeEl.classList.toggle('open');
+            if (wrapper.classList.contains('open')) {
+                document.getElementById('dokterSearchInput').focus();
+                populateDoctorDropdown();
+            }
+        }
+
+        function closeDoctorDropdown() {
+            document.getElementById('dokterDropdownListWrapper').classList.remove('open');
+            document.getElementById('dokterDropdownActive').classList.remove('open');
+        }
+
+        // UPDATED selectDoctor function
         function selectDoctor(doctorId) {
-            currentDoctorId = doctorId;
-            currentTransactionPage = 1; // Reset to first page when selecting a new doctor
-            const doctor = doctors.find(d => d.id == doctorId);
+            currentDoctorId = doctorId; // Can be null
+            currentTransactionPage = 1; // Reset pagination
+
+            const doctor = doctors.find(d => d.id == doctorId); // doctor will be undefined if doctorId is null or not found
+
             const deleteDoctorButton = document.getElementById('deleteDoctorBtn');
-
-            document.querySelectorAll('#doctorList li').forEach(li => {
-                li.classList.toggle('active', li.getAttribute('data-id') == doctorId);
-            });
-
+            const activeDokterNameEl = document.getElementById('activeDokterName');
             const doctorInfoSection = document.getElementById('doctorInfo');
             const noDoctorSelectedSection = document.getElementById('noDoctorSelected');
             const welcomeHeader = document.getElementById('welcomeHeader');
             const welcomeSubheader = document.getElementById('welcomeSubheader');
 
-            if (doctor) {
-                welcomeHeader.textContent = `Dasbor Dr. ${doctor.name}`;
-                welcomeSubheader.textContent = `Kelola data keuangan untuk Dr. ${doctor.name}.`;
+            // Reset transaction filters regardless of whether a doctor is selected or not
+            document.getElementById('searchKeterangan').value = '';
+            document.getElementById('filterTanggalMulai').value = '';
+            document.getElementById('filterTanggalAkhir').value = '';
+            document.getElementById('filterJenisTransaksi').value = 'semua';
+            const filterSection = document.getElementById('transactionFilters');
+            const toggleFilterButton = document.getElementById('toggleFilterBtn');
+            filterSection.classList.remove('open'); // Close filter section
+            toggleFilterButton.innerHTML = '<i data-feather="filter"></i> <span>Tampilkan Filter</span>';
 
-                updateDoctorInfoUI(doctor);
+
+            if (doctor) { // A valid doctor is selected
+                activeDokterNameEl.textContent = doctor.name;
+                welcomeHeader.textContent = `Catatan ${doctor.name}`;
+                welcomeSubheader.textContent = `Kelola data keuangan untuk ${doctor.name}.`;
+
+                updateDoctorInfoUI(doctor); // This will calculate overall stats and then call applyTransactionFiltersAndRender
+
                 doctorInfoSection.style.display = 'block';
                 noDoctorSelectedSection.style.display = 'none';
                 if (deleteDoctorButton) deleteDoctorButton.style.display = 'inline-flex';
+                setTodayDate('expenseDateModal'); // Set default date for new expense
 
-                setTodayDate('expenseDateModal'); // Set default date for new expense modal
-            } else {
-                currentDoctorId = null;
+                // Save last selected doctor to localStorage
+                if (currentUser && currentUser.uid) {
+                    localStorage.setItem(`lastSelectedDoctor_${currentUser.uid}`, doctor.id);
+                }
+
+            } else { // No doctor selected (doctorId is null or doctor not found)
+                activeDokterNameEl.textContent = 'Pilih Dokter...';
+                currentDoctorId = null; // Ensure it's explicitly null if doctor not found
+
+                updateDoctorInfoUI(null); // Call with null to reset stats and transaction UI
+
                 doctorInfoSection.style.display = 'none';
                 noDoctorSelectedSection.style.display = 'block';
                 welcomeHeader.textContent = 'Dasbor Utama';
                 welcomeSubheader.textContent = 'Selamat datang! Pilih dokter untuk memulai.';
                 if (deleteDoctorButton) deleteDoctorButton.style.display = 'none';
-                document.getElementById('transactionsTable').innerHTML = ''; // Clear table
-                document.getElementById('paginationControls').innerHTML = ''; // Clear pagination
+
+                // Clear last selected doctor from localStorage if no doctor is active
+                if (currentUser && currentUser.uid) {
+                    localStorage.removeItem(`lastSelectedDoctor_${currentUser.uid}`);
+                }
             }
+            if (typeof feather !== 'undefined') feather.replace(); // Update icons
         }
 
+
+        // UPDATED updateDoctorInfoUI function
         function updateDoctorInfoUI(doctor) {
-            const totalExpense = doctor.transactions
-                .filter(t => t.type === 'expense')
-                .reduce((sum, t) => sum + t.amount, 0);
-
-            const totalIncome = doctor.transactions
-                .filter(t => t.type === 'income')
-                .reduce((sum, t) => sum + t.amount, 0);
-
-            doctor.totalDeposit = totalIncome;
-            const remainingBalance = doctor.totalDeposit - totalExpense;
-
-            document.getElementById('totalDeposit').textContent = formatCurrency(doctor.totalDeposit);
-            document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
+            const totalDepositEl = document.getElementById('totalDeposit');
+            const totalExpenseEl = document.getElementById('totalExpense');
             const remainingBalanceEl = document.getElementById('remainingBalance');
-            remainingBalanceEl.textContent = formatCurrency(remainingBalance);
-            remainingBalanceEl.className = 'stat-card-value';
-            remainingBalanceEl.classList.add(remainingBalance < 0 ? 'negative' : 'positive');
 
-            renderTransactions(doctor.transactions, currentTransactionPage);
+            if (!doctor || !doctor.id) { // Handles null or invalid doctor object
+                console.warn("updateDoctorInfoUI: No valid doctor selected or passed. Resetting stats.");
+                totalDepositEl.textContent = formatCurrency(0);
+                totalExpenseEl.textContent = formatCurrency(0);
+                remainingBalanceEl.textContent = formatCurrency(0);
+                remainingBalanceEl.className = 'stat-card-value positive'; // Default class
+
+                currentFilteredTransactions = [];
+                renderTransactions([], 1);      // Render empty transaction table
+                updateTransactionSummary([]);   // Reset filtered summary (which should also be 0)
+                return;
+            }
+
+            // Ensure doctor.transactions is an array, default to empty if not
+            const transactions = Array.isArray(doctor.transactions) ? doctor.transactions : [];
+
+            const totalIncomeOverall = transactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + (Number(t.amount) || 0), 0); // Ensure amount is treated as number
+
+            const totalExpenseOverall = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + (Number(t.amount) || 0), 0); // Ensure amount is treated as number
+
+            const remainingBalanceOverall = totalIncomeOverall - totalExpenseOverall;
+
+            totalDepositEl.textContent = formatCurrency(totalIncomeOverall);
+            totalExpenseEl.textContent = formatCurrency(totalExpenseOverall);
+            remainingBalanceEl.textContent = formatCurrency(remainingBalanceOverall);
+            remainingBalanceEl.className = 'stat-card-value'; // Reset classes first
+            remainingBalanceEl.classList.add(remainingBalanceOverall < 0 ? 'negative' : 'positive');
+
+            // This will handle filtering and rendering the transaction table based on the current doctor's full transaction list.
+            applyTransactionFiltersAndRender();
         }
 
-        // ===== TRANSACTIONS RENDER (ADAPTED FOR NEW UI) =====
-        function renderTransactions(allTransactions, page = 1) {
+
+        // ===== TRANSACTIONS FILTERING AND RENDERING =====
+        function applyTransactionFiltersAndRender() {
+            const doctor = doctors.find(d => d.id == currentDoctorId); // Get the current doctor again
+
+            if (!doctor || !Array.isArray(doctor.transactions)) { // Guard against no doctor or no transactions array
+                currentFilteredTransactions = [];
+                renderTransactions([], 1);
+                updateTransactionSummary([]);
+                return;
+            }
+
+            let transactionsToDisplay = doctor.transactions.slice();
+
+            // Apply search filter
+            const searchTerm = document.getElementById('searchKeterangan').value.toLowerCase();
+            if (searchTerm) {
+                transactionsToDisplay = transactionsToDisplay.filter(t =>
+                    (t.description || '').toLowerCase().includes(searchTerm) // Add guard for t.description
+                );
+            }
+
+            // Apply date range filter
+            const startDateStr = document.getElementById('filterTanggalMulai').value;
+            const endDateStr = document.getElementById('filterTanggalAkhir').value;
+            if (startDateStr) {
+                const startDate = new Date(startDateStr);
+                startDate.setHours(0, 0, 0, 0);
+                transactionsToDisplay = transactionsToDisplay.filter(t => new Date(t.date) >= startDate);
+            }
+            if (endDateStr) {
+                const endDate = new Date(endDateStr);
+                endDate.setHours(23, 59, 59, 999);
+                transactionsToDisplay = transactionsToDisplay.filter(t => new Date(t.date) <= endDate);
+            }
+
+            // Apply type filter
+            const typeFilter = document.getElementById('filterJenisTransaksi').value;
+            if (typeFilter !== 'semua') {
+                transactionsToDisplay = transactionsToDisplay.filter(t => t.type === typeFilter);
+            }
+
+            currentFilteredTransactions = transactionsToDisplay;
+            updateTransactionSummary(currentFilteredTransactions);
+            // currentTransactionPage = 1; // Reset to first page after filtering - This was causing issues when deleting/editing on other pages.
+            // Better to keep current page if possible, or reset intelligently.
+            // For now, removing this reset, pagination will handle current page.
+            renderTransactions(currentFilteredTransactions, currentTransactionPage);
+        }
+
+        function updateTransactionSummary(filteredTransactions) {
+            const totalIncomeFiltered = filteredTransactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+            const totalExpenseFiltered = filteredTransactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+
+            document.getElementById('summaryIncome').textContent = `Total Pemasukan (Filter): ${formatCurrency(totalIncomeFiltered)}`;
+            document.getElementById('summaryExpense').textContent = `Total Pengeluaran (Filter): ${formatCurrency(totalExpenseFiltered)}`;
+        }
+
+
+        function renderTransactions(transactionsToPaginate, page = 1) {
             const container = document.getElementById('transactionsTable');
             const paginationControls = document.getElementById('paginationControls');
-            container.innerHTML = ''; // Clear previous table
-            paginationControls.innerHTML = ''; // Clear previous controls
+            container.innerHTML = '';
+            paginationControls.innerHTML = '';
 
-            if (!allTransactions || allTransactions.length === 0) {
-                container.innerHTML = `<div class="empty-state" style="padding: 30px;"><i data-feather="info"></i><p>Belum ada transaksi untuk dokter ini.</p></div>`;
+            if (!transactionsToPaginate || transactionsToPaginate.length === 0) {
+                container.innerHTML = `<div class="empty-state" style="padding: 30px;"><i data-feather="info"></i><p>Tidak ada transaksi yang sesuai dengan filter.</p></div>`;
                 if (typeof feather !== 'undefined') feather.replace();
                 return;
             }
 
-            const sortedTransactions = allTransactions.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+            const sortedTransactions = transactionsToPaginate.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            // Adjust page number if it's out of bounds
+            const totalPages = Math.ceil(sortedTransactions.length / transactionsPerPage);
+            if (page > totalPages && totalPages > 0) {
+                page = totalPages;
+                currentTransactionPage = totalPages; // Update global current page
+            }
+            if (page < 1 && totalPages > 0) { // Should not happen with current logic but good to have
+                page = 1;
+                currentTransactionPage = 1;
+            }
+
 
             const startIndex = (page - 1) * transactionsPerPage;
             const endIndex = page * transactionsPerPage;
@@ -2126,14 +2473,14 @@
                         <tbody>`;
 
             paginatedTransactions.forEach((t, index) => {
-                const overallIndex = startIndex + index + 1; // Calculate overall number
+                const displayIndex = startIndex + index + 1;
                 const isIncome = t.type === 'income';
                 const typeLabel = isIncome ? '(Pemasukan)' : '(Pengeluaran)';
                 const descriptionText = `${t.description} <em style="font-size:0.8em; color:${isIncome ? 'var(--green)' : 'var(--red)'};">${typeLabel}</em>`;
 
                 tableHTML += `
                     <tr>
-                        <td class="no-column">${overallIndex}</td>
+                        <td class="no-column">${displayIndex}</td>
                         <td>${formatDate(t.date)}</td>
                         <td class="description-cell" title="${t.description} ${typeLabel}">${descriptionText}</td>
                         <td class="amount-cell ${isIncome ? 'income-amount' : 'expense-amount'}">
@@ -2155,7 +2502,7 @@
             tableHTML += '</tbody></table></div>';
             container.innerHTML = tableHTML;
 
-            renderPaginationControls(allTransactions.length, page);
+            renderPaginationControls(transactionsToPaginate.length, page);
 
             if (typeof feather !== 'undefined') feather.replace();
         }
@@ -2165,22 +2512,19 @@
             const totalPages = Math.ceil(totalItems / transactionsPerPage);
 
             if (totalPages <= 1) {
-                paginationControls.innerHTML = ''; // No controls if only one page or less
+                paginationControls.innerHTML = '';
                 return;
             }
 
             let controlsHTML = '';
 
-            // Previous Button
             controlsHTML += `
                 <button class="btn btn-outline btn-sm" onclick="changeTransactionPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
                     <i data-feather="chevron-left"></i> Seb
                 </button>`;
 
-            // Page Info (e.g., Page 1 of 3)
             controlsHTML += `<span class="page-info">Hal ${currentPage} dari ${totalPages}</span>`;
 
-            // Next Button
             controlsHTML += `
                 <button class="btn btn-outline btn-sm" onclick="changeTransactionPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
                     Ber <i data-feather="chevron-right"></i>
@@ -2191,16 +2535,19 @@
         }
 
         function changeTransactionPage(newPage) {
-            const doctor = doctors.find(d => d.id == currentDoctorId);
-            if (doctor) {
+            const totalPages = Math.ceil(currentFilteredTransactions.length / transactionsPerPage);
+            if (newPage >= 1 && newPage <= totalPages) {
                 currentTransactionPage = newPage;
-                renderTransactions(doctor.transactions, currentTransactionPage);
+                renderTransactions(currentFilteredTransactions, currentTransactionPage);
+            } else if (totalPages === 0 && newPage === 1) { // Handle case where all transactions are filtered out
+                currentTransactionPage = 1;
+                renderTransactions([], 1); // Render empty state
             }
         }
 
 
         // ===== CORE LOGIC FUNCTIONS (addExpense, addDoctor, etc. - CORE LOGIC UNCHANGED) =====
-        async function addExpense() { // Reads from addExpenseModal
+        async function addExpense() {
             const date = document.getElementById('expenseDateModal').value;
             const description = document.getElementById('expenseDescModal').value.trim();
             const amount = unformatNumber(document.getElementById('expenseAmountModal').value);
@@ -2220,12 +2567,12 @@
                     type: 'expense',
                     createdAt: new Date().toISOString()
                 };
+                if (!Array.isArray(doctor.transactions)) doctor.transactions = []; // Ensure transactions array exists
                 doctor.transactions.push(newTransaction);
-                currentTransactionPage = 1; // Go to first page to see new transaction
                 await saveUserData();
                 updateDoctorInfoUI(doctor);
                 closeModal('addExpenseModal');
-                document.getElementById('addExpenseForm').reset(); // Reset form in modal
+                document.getElementById('addExpenseForm').reset();
                 showNotification('✅ Pengeluaran berhasil dicatat!', 'success');
             } else {
                 showNotification('❌ Dokter tidak ditemukan. Tidak dapat menambah pengeluaran.', 'error');
@@ -2250,8 +2597,7 @@
             const newDoctor = {
                 id: Date.now(),
                 name: name,
-                totalDeposit: 0,
-                transactions: [],
+                transactions: [], // Initialize as empty array
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
@@ -2270,17 +2616,18 @@
 
             doctors.push(newDoctor);
             await saveUserData();
-            loadDoctors();
+            populateDoctorDropdown();
             selectDoctor(newDoctor.id);
             closeModal('addDoctorModal');
             showNotification(`✅ Dokter "${name}" berhasil ditambahkan!`, 'success');
             document.getElementById('newDoctorName').value = '';
             document.getElementById('initialDeposit').value = '';
+            document.getElementById('nameHint').style.display = 'none'; // Hide hint after adding
         }
 
         async function addDeposit() {
             const amount = unformatNumber(document.getElementById('additionalDeposit').value);
-            const description = document.getElementById('depositDesc').value.trim() || 'Tambah Deposit Rutin';
+            const description = document.getElementById('depositDesc').value.trim() || 'Tambah Deposit';
 
             if (!amount || amount <= 0) {
                 showNotification('❌ Jumlah deposit tidak valid atau kosong.', 'error');
@@ -2298,8 +2645,8 @@
                     type: 'income',
                     createdAt: new Date().toISOString()
                 };
+                if (!Array.isArray(doctor.transactions)) doctor.transactions = []; // Ensure transactions array exists
                 doctor.transactions.push(depositTransaction);
-                currentTransactionPage = 1; // Go to first page
                 await saveUserData();
                 updateDoctorInfoUI(doctor);
                 closeModal('addDepositModal');
@@ -2311,49 +2658,59 @@
             }
         }
 
-        async function confirmDelete() {
+        async function confirmDelete() { // Deletes a transaction
             const doctor = doctors.find(d => d.id == currentDoctorId);
             if (doctor && deleteTransactionId) {
-                const oldTotalTransactions = doctor.transactions.length;
+                if (!Array.isArray(doctor.transactions)) doctor.transactions = [];
+                const initialLength = doctor.transactions.length;
                 doctor.transactions = doctor.transactions.filter(t => t.id != deleteTransactionId);
-                doctor.updatedAt = new Date().toISOString();
 
-                // Adjust current page if the last item on the last page was deleted
-                const newTotalPages = Math.ceil(doctor.transactions.length / transactionsPerPage);
-                if (currentTransactionPage > newTotalPages && newTotalPages > 0) {
-                    currentTransactionPage = newTotalPages;
-                } else if (newTotalPages === 0) {
-                    currentTransactionPage = 1;
+                if (doctor.transactions.length < initialLength) { // Check if a transaction was actually removed
+                    doctor.updatedAt = new Date().toISOString();
+                    await saveUserData();
+                    updateDoctorInfoUI(doctor);
+                    showNotification('✅ Transaksi berhasil dihapus.', 'success');
+                } else {
+                    showNotification('ℹ️ Transaksi tidak ditemukan untuk dihapus.', 'info');
                 }
-
-                await saveUserData();
-                updateDoctorInfoUI(doctor); // This will re-render with pagination
                 closeModal('confirmDeleteModal');
-                showNotification('✅ Transaksi berhasil dihapus.', 'success');
+                deleteTransactionId = null;
+            } else {
+                closeModal('confirmDeleteModal');
+                showNotification('❌ Gagal menghapus transaksi: Dokter atau ID transaksi tidak valid.', 'error');
                 deleteTransactionId = null;
             }
         }
 
+
         async function confirmDeleteDoctor() {
             if (currentDoctorId) {
-                const doctorName = doctors.find(d => d.id == currentDoctorId)?.name || "Dokter ini";
+                const doctorToDelete = doctors.find(d => d.id == currentDoctorId);
+                const doctorName = doctorToDelete ? doctorToDelete.name : "Dokter ini";
+
                 doctors = doctors.filter(d => d.id != currentDoctorId);
                 await saveUserData();
-                loadDoctors();
-                currentDoctorId = null;
-                selectDoctor(null);
-                closeModal('confirmDeleteDoctorModal');
-                showNotification(`✅ ${doctorName} dan semua datanya berhasil dihapus.`, 'success');
+
+                populateDoctorDropdown();
+
+                // Select another doctor if available, otherwise select null
+                currentDoctorId = null; // Reset currentDoctorId before selecting new one
                 if (doctors.length > 0) {
                     selectDoctor(doctors[0].id);
+                } else {
+                    selectDoctor(null);
                 }
+
+                closeModal('confirmDeleteDoctorModal');
+                showNotification(`✅ ${doctorName} dan semua datanya berhasil dihapus.`, 'success');
             }
         }
 
+
         // ===== FORM & MODAL UI FUNCTIONS (ADAPTED) =====
         function showAddExpenseModal() {
-            document.getElementById('addExpenseForm').reset(); // Clear previous input
-            setTodayDate('expenseDateModal'); // Set today's date for the modal input
+            document.getElementById('addExpenseForm').reset();
+            setTodayDate('expenseDateModal');
             document.getElementById('addExpenseModal').classList.add('show');
             document.getElementById('expenseDescModal').focus();
         }
@@ -2383,12 +2740,16 @@
         }
 
         function showAddDoctorModal() {
-            document.getElementById('addDoctorModal').classList.add('show');
-            document.getElementById('newDoctorName').value = '';
-            document.getElementById('initialDeposit').value = '';
-            checkDoctorName();
-            document.getElementById('newDoctorName').focus();
+            closeDrawer();
+            setTimeout(() => {
+                document.getElementById('addDoctorModal').classList.add('show');
+                document.getElementById('newDoctorName').value = '';
+                document.getElementById('initialDeposit').value = '';
+                checkDoctorName(); // Reset hint
+                document.getElementById('newDoctorName').focus();
+            }, 50);
         }
+
 
         function showAddDepositModal() {
             document.getElementById('additionalDeposit').value = '';
@@ -2418,18 +2779,19 @@
                 showNotification('❌ Pilih dokter terlebih dahulu untuk export laporan.', 'error');
                 return;
             }
-            if (!doctor.transactions || doctor.transactions.length === 0) {
-                showNotification('ℹ️ Tidak ada transaksi untuk dokter ini yang bisa diexport.', 'error');
+            if (!Array.isArray(doctor.transactions) || doctor.transactions.length === 0) {
+                showNotification('ℹ️ Tidak ada transaksi untuk dokter ini yang bisa diexport.', 'info'); // Changed to info
                 return;
             }
             document.getElementById('exportPDFModal').classList.add('show');
             document.getElementById('exportType').value = 'all';
             document.getElementById('dateRangeGroup').style.display = 'none';
             document.getElementById('exportFromDate').value = '';
-            document.getElementById('exportToDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('exportToDate').value = new Date().toISOString().split('T')[0]; // Default to today
             document.getElementById('exportSort').value = 'newest';
-            setupExportModalEventListeners();
+            setupExportModalEventListeners(); // Ensure listeners are (re)attached
         }
+
 
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -2440,7 +2802,7 @@
         function showEditTransactionModal(transactionId) {
             currentEditingTransactionId = transactionId;
             const doctor = doctors.find(d => d.id == currentDoctorId);
-            if (!doctor) return;
+            if (!doctor || !Array.isArray(doctor.transactions)) return;
 
             const transaction = doctor.transactions.find(t => t.id == transactionId);
             if (!transaction) return;
@@ -2448,7 +2810,7 @@
             document.getElementById('editTransactionId').value = transaction.id;
             document.getElementById('editTransactionDate').value = transaction.date;
             document.getElementById('editTransactionDesc').value = transaction.description;
-            document.getElementById('editTransactionAmount').value = formatNumber(transaction.amount); // Format for display
+            document.getElementById('editTransactionAmount').value = formatNumber(transaction.amount);
             document.getElementById('editTransactionType').value = transaction.type;
 
 
@@ -2457,12 +2819,11 @@
         }
 
         async function saveEditedTransaction() {
-            const transactionId = currentEditingTransactionId;
+            const transactionId = currentEditingTransactionId; // Use the stored ID
             const newDate = document.getElementById('editTransactionDate').value;
             const newDesc = document.getElementById('editTransactionDesc').value.trim();
             const newAmount = unformatNumber(document.getElementById('editTransactionAmount').value);
-            // Type is not editable for now, but could be added:
-            // const newType = document.getElementById('editTransactionType').value; 
+            // const newType = document.getElementById('editTransactionType').value; // Type is disabled, so it won't change
 
             if (!newDate || !newDesc || !newAmount || newAmount <= 0) {
                 showNotification('❌ Harap isi semua field edit dengan benar.', 'error');
@@ -2470,22 +2831,24 @@
             }
 
             const doctor = doctors.find(d => d.id == currentDoctorId);
-            if (doctor) {
+            if (doctor && Array.isArray(doctor.transactions)) {
                 const transactionIndex = doctor.transactions.findIndex(t => t.id == transactionId);
                 if (transactionIndex > -1) {
                     doctor.transactions[transactionIndex].date = newDate;
                     doctor.transactions[transactionIndex].description = newDesc;
                     doctor.transactions[transactionIndex].amount = newAmount;
-                    // doctor.transactions[transactionIndex].type = newType; // If type editing is enabled
+                    // doctor.transactions[transactionIndex].type = newType; // Not needed as it's disabled
                     doctor.transactions[transactionIndex].updatedAt = new Date().toISOString();
 
                     await saveUserData();
-                    updateDoctorInfoUI(doctor); // This will re-render with pagination
+                    updateDoctorInfoUI(doctor);
                     closeModal('editTransactionModal');
                     showNotification('✅ Transaksi berhasil diperbarui!', 'success');
                 } else {
                     showNotification('❌ Transaksi tidak ditemukan untuk diedit.', 'error');
                 }
+            } else {
+                showNotification('❌ Dokter tidak ditemukan atau data transaksi tidak valid.', 'error');
             }
             currentEditingTransactionId = null;
         }
@@ -2495,19 +2858,20 @@
         function setupExportModalEventListeners() {
             const exportTypeSelect = document.getElementById('exportType');
             const dateRangeGroup = document.getElementById('dateRangeGroup');
-            if (!exportTypeSelect.dataset.listenerAttached) {
-                exportTypeSelect.onchange = function () {
-                    dateRangeGroup.style.display = this.value === 'range' ? 'block' : 'none';
-                    if (this.value === 'range' && !document.getElementById('exportFromDate').value) {
-                        const today = new Date();
-                        const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-                        document.getElementById('exportFromDate').value = lastMonth.toISOString().split('T')[0];
-                        document.getElementById('exportToDate').value = today.toISOString().split('T')[0];
-                    }
-                };
-                exportTypeSelect.dataset.listenerAttached = 'true';
-            }
+
+            // Remove existing listener to prevent multiple attachments if function is called multiple times
+            // This requires storing the listener or using a flag, simpler approach is to just set it.
+            exportTypeSelect.onchange = function () { // Direct assignment is simpler here
+                dateRangeGroup.style.display = this.value === 'range' ? 'block' : 'none';
+                if (this.value === 'range' && !document.getElementById('exportFromDate').value) {
+                    const today = new Date();
+                    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+                    document.getElementById('exportFromDate').value = lastMonth.toISOString().split('T')[0];
+                    document.getElementById('exportToDate').value = today.toISOString().split('T')[0];
+                }
+            };
         }
+
 
         function processExportToPDF() {
             const doctor = doctors.find(d => d.id == currentDoctorId);
@@ -2515,6 +2879,11 @@
                 showNotification('❌ Dokter tidak ditemukan untuk export.', 'error');
                 return;
             }
+            if (!Array.isArray(doctor.transactions)) {
+                showNotification('ℹ️ Format data transaksi dokter ini tidak valid.', 'info');
+                return;
+            }
+
 
             const exportType = document.getElementById('exportType').value;
             const exportSort = document.getElementById('exportSort').value;
@@ -2573,30 +2942,43 @@
                     currentY += 8;
                 }
 
-                const totalExpenseForPeriod = transactionsToExport
+                // Overall financial summary for the doctor (from all their transactions)
+                const overallTotalIncome = (Array.isArray(doctor.transactions) ? doctor.transactions : [])
+                    .filter(t => t.type === 'income')
+                    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+                const overallTotalExpense = (Array.isArray(doctor.transactions) ? doctor.transactions : [])
                     .filter(t => t.type === 'expense')
-                    .reduce((sum, t) => sum + t.amount, 0);
-                const overallTotalDeposit = doctor.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-                const overallTotalExpense = doctor.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-                const overallRemainingBalance = overallTotalDeposit - overallTotalExpense;
+                    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+                const overallRemainingBalance = overallTotalIncome - overallTotalExpense;
+
+                // Summary specific to the EXPORTED (potentially filtered) transactions
+                const exportedTotalIncome = transactionsToExport
+                    .filter(t => t.type === 'income')
+                    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+                const exportedTotalExpense = transactionsToExport
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+
 
                 // Data for summary table
                 const summaryBody = [
-                    ['Total Deposit Keseluruhan (Dr. ' + doctor.name + ')', formatCurrency(overallTotalDeposit)],
-                    ['Total Pengeluaran (Periode Laporan Ini)', formatCurrency(totalExpenseForPeriod)],
+                    ['Total Deposit Keseluruhan (Dr. ' + doctor.name + ')', formatCurrency(overallTotalIncome)],
+                    ['Total Pengeluaran Keseluruhan (Dr. ' + doctor.name + ')', formatCurrency(overallTotalExpense)],
                 ];
-
-                // Add Sisa Saldo with conditional styling
-                const sisaSaldoText = formatCurrency(overallRemainingBalance);
                 const sisaSaldoStyle = {
-                    content: sisaSaldoText,
+                    content: formatCurrency(overallRemainingBalance),
                     styles: {
                         halign: 'right',
-                        fillColor: overallRemainingBalance < 0 ? [239, 68, 68] : [16, 185, 129], // Red or Green
-                        textColor: [255, 255, 255] // White text
+                        fillColor: overallRemainingBalance < 0 ? [239, 68, 68] : [16, 185, 129],
+                        textColor: [255, 255, 255]
                     }
                 };
                 summaryBody.push(['Sisa Saldo Keseluruhan (Dr. ' + doctor.name + ')', sisaSaldoStyle]);
+
+                if (exportType === 'range') { // Add summary for the filtered period if applicable
+                    summaryBody.push(['Total Pemasukan (Periode Laporan Ini)', formatCurrency(exportedTotalIncome)]);
+                    summaryBody.push(['Total Pengeluaran (Periode Laporan Ini)', formatCurrency(exportedTotalExpense)]);
+                }
 
 
                 doc.autoTable({
@@ -2604,8 +2986,8 @@
                     head: [['Deskripsi Ringkasan', 'Jumlah']],
                     body: summaryBody,
                     theme: 'grid',
-                    headStyles: { fillColor: [79, 70, 229] },
-                    columnStyles: { 1: { halign: 'right' } }, // Align amount to the right
+                    headStyles: { fillColor: [79, 70, 229] }, // Indigo
+                    columnStyles: { 1: { halign: 'right' } },
                     margin: { top: 10 }
                 });
                 currentY = doc.lastAutoTable.finalY + 10;
@@ -2622,7 +3004,7 @@
                             { content: formatCurrency(t.amount), styles: { halign: 'right' } }
                         ]),
                         theme: 'striped',
-                        headStyles: { fillColor: [79, 70, 229] },
+                        headStyles: { fillColor: [79, 70, 229] }, // Indigo
                         columnStyles: {
                             0: { cellWidth: 10 },
                             1: { cellWidth: 25 },
@@ -2631,17 +3013,17 @@
                             4: { cellWidth: 30, halign: 'right' }
                         },
                         didParseCell: function (data) {
-                            if (data.row.section === 'body' && data.column.dataKey === 3) {
+                            if (data.row.section === 'body' && data.column.dataKey === 3) { // Column for "Jenis"
                                 if (data.cell.raw === 'Pemasukan') {
-                                    data.cell.styles.textColor = [16, 185, 129];
+                                    data.cell.styles.textColor = [16, 185, 129]; // var(--green)
                                 } else if (data.cell.raw === 'Pengeluaran') {
-                                    data.cell.styles.textColor = [239, 68, 68];
+                                    data.cell.styles.textColor = [239, 68, 68]; // var(--red)
                                 }
                             }
                         }
                     });
                 } else {
-                    doc.text('Tidak ada transaksi untuk ditampilkan dalam periode ini.', 14, currentY);
+                    doc.text('Tidak ada transaksi untuk ditampilkan dalam periode/filter ini.', 14, currentY);
                 }
 
                 let filename = `Laporan_${doctor.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
@@ -2659,27 +3041,37 @@
 
         function showCalculatorModal(targetId) {
             calculatorTargetInputId = targetId;
-            document.getElementById('calculatorDisplay').value = ''; // Clear display
-            calculatorCurrentExpression = ''; // Clear expression
+            const targetInput = document.getElementById(targetId);
+            if (targetInput && targetInput.value) {
+                calculatorCurrentExpression = String(unformatNumber(targetInput.value));
+                document.getElementById('calculatorDisplay').value = calculatorCurrentExpression;
+            } else {
+                document.getElementById('calculatorDisplay').value = '';
+                calculatorCurrentExpression = '';
+            }
             document.getElementById('calculatorModal').classList.add('show');
             if (typeof feather !== 'undefined') feather.replace();
         }
 
         function appendToCalculatorDisplay(value) {
             const display = document.getElementById('calculatorDisplay');
-            // Prevent multiple operators or leading operator (except minus)
             const lastChar = calculatorCurrentExpression.slice(-1);
             const operators = ['/', '*', '-', '+'];
-            if (operators.includes(value) && operators.includes(lastChar)) {
-                // Replace last operator if new one is different, or ignore if same
-                if (value !== lastChar) {
-                    calculatorCurrentExpression = calculatorCurrentExpression.slice(0, -1) + value;
-                }
-            } else if (operators.includes(value) && calculatorCurrentExpression === '' && value !== '-') {
-                // Prevent leading operator other than minus
-                return;
+
+            if (value === '.' && calculatorCurrentExpression.includes('.')) {
+                const parts = calculatorCurrentExpression.split(/[+\-*/]/);
+                if (parts[parts.length - 1].includes('.')) return; // Prevent multiple decimals in current number segment
             }
-            else {
+
+
+            if (operators.includes(value)) {
+                if (calculatorCurrentExpression === '' && value !== '-') return;
+                if (operators.includes(lastChar)) {
+                    calculatorCurrentExpression = calculatorCurrentExpression.slice(0, -1) + value;
+                } else {
+                    calculatorCurrentExpression += value;
+                }
+            } else {
                 calculatorCurrentExpression += value;
             }
             display.value = calculatorCurrentExpression;
@@ -2693,17 +3085,16 @@
         function calculateResult() {
             const display = document.getElementById('calculatorDisplay');
             try {
-                // Basic sanitization: remove anything not a digit, operator, or decimal point.
                 let sanitizedExpression = calculatorCurrentExpression.replace(/[^-()\d/*+.]/g, '');
                 if (sanitizedExpression === '') {
                     display.value = '0';
                     calculatorCurrentExpression = '0';
                     return;
                 }
-                // Using Function constructor for safer evaluation than direct eval()
+                // Avoid direct eval. Use Function constructor for safer evaluation.
                 let result = new Function('return ' + sanitizedExpression)();
                 if (isNaN(result) || !isFinite(result)) {
-                    throw new Error("Invalid calculation");
+                    throw new Error("Invalid calculation result");
                 }
                 display.value = result;
                 calculatorCurrentExpression = result.toString();
@@ -2716,20 +3107,25 @@
 
         function applyCalculatorResult() {
             const display = document.getElementById('calculatorDisplay');
-            // Ensure calculation is done if user presses OK without pressing =
-            if (calculatorCurrentExpression !== display.value) { // If display was manually changed or = was not pressed
-                calculateResult(); // Calculate first
-                if (display.value === 'Error') { // If calculation resulted in error
+            // Ensure calculation is performed if expression changed or current is Error
+            if (calculatorCurrentExpression !== display.value || display.value === 'Error' || display.value === '') {
+                if (calculatorCurrentExpression === '') { // if display is empty, result is 0
+                    display.value = '0';
+                } else {
+                    calculateResult(); // Calculate if not already the result
+                }
+                if (display.value === 'Error') {
                     showNotification("Hasil kalkulator tidak valid.", "error");
                     return;
                 }
             }
 
+
             const result = parseFloat(display.value);
             if (!isNaN(result) && calculatorTargetInputId) {
                 const targetInput = document.getElementById(calculatorTargetInputId);
                 if (targetInput) {
-                    targetInput.value = result; // Set raw number
+                    targetInput.value = result; // Set the raw number
                     formatAmountInput(targetInput); // Then format it
                 }
             }
@@ -2743,11 +3139,10 @@
             const overlay = document.getElementById('mainContentOverlay');
             const body = document.body;
             sidebar.classList.toggle('open');
-            body.classList.toggle('drawer-open');
-            if (overlay) { // Check if overlay exists
-                overlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
-            }
+            body.classList.toggle('drawer-open'); // This class on body prevents main content scroll
+            // Overlay display is handled by CSS based on body.drawer-open and sidebar.open
         }
+
 
         function closeDrawer() {
             const sidebar = document.getElementById('sidebar');
@@ -2755,55 +3150,92 @@
             const body = document.body;
             sidebar.classList.remove('open');
             body.classList.remove('drawer-open');
-            if (overlay) {
-                overlay.style.display = 'none';
+            // Overlay display is handled by CSS
+        }
+
+        // ===== FILTER TOGGLE LOGIC =====
+        function toggleFilterSection() {
+            const filterSection = document.getElementById('transactionFilters');
+            const toggleButton = document.getElementById('toggleFilterBtn');
+            const isOpen = filterSection.classList.toggle('open');
+            if (isOpen) {
+                toggleButton.innerHTML = '<i data-feather="chevron-up"></i> <span>Sembunyikan Filter</span>';
+            } else {
+                toggleButton.innerHTML = '<i data-feather="filter"></i> <span>Tampilkan Filter</span>';
             }
+            if (typeof feather !== 'undefined') feather.replace();
         }
 
 
         // ===== EVENT LISTENERS SETUP =====
         function setupEventListeners() {
             document.getElementById('googleLoginBtn').onclick = signInWithGoogle;
-            // Desktop logout button
+
             const logoutBtnDesktop = document.getElementById('logoutBtnDesktop');
             if (logoutBtnDesktop) logoutBtnDesktop.onclick = signOut;
-            // Sidebar (drawer) logout button
+
             const logoutBtnSidebar = document.getElementById('logoutBtnSidebar');
             if (logoutBtnSidebar) logoutBtnSidebar.onclick = () => {
                 signOut();
-                closeDrawer(); // Close drawer after logout
+                closeDrawer();
             };
 
-            // Changed from toggleExpenseBtn to addExpenseModalBtn
             const addExpenseModalButton = document.getElementById('addExpenseModalBtn');
             if (addExpenseModalButton) addExpenseModalButton.onclick = showAddExpenseModal;
 
             document.getElementById('addExpenseForm').onsubmit = e => { e.preventDefault(); addExpense(); };
             document.getElementById('editTransactionForm').onsubmit = e => { e.preventDefault(); saveEditedTransaction(); };
 
-            // Hamburger button to toggle drawer
             const hamburgerBtn = document.getElementById('hamburgerBtn');
             if (hamburgerBtn) hamburgerBtn.onclick = toggleDrawer;
 
-            // Overlay click to close drawer
             const overlay = document.getElementById('mainContentOverlay');
             if (overlay) overlay.onclick = closeDrawer;
 
+            // Dokter Dropdown Listeners
+            const dokterDropdownActiveEl = document.getElementById('dokterDropdownActive');
+            if (dokterDropdownActiveEl) dokterDropdownActiveEl.onclick = toggleDoctorDropdown;
+
+            const dokterSearchInputEl = document.getElementById('dokterSearchInput');
+            if (dokterSearchInputEl) dokterSearchInputEl.oninput = (e) => populateDoctorDropdown(e.target.value);
+
+            // Add Doctor button in sidebar
+            const addDoctorSidebarButton = document.getElementById('addDoctorSidebarBtn');
+            if (addDoctorSidebarButton) addDoctorSidebarButton.onclick = showAddDoctorModal;
+
+
+            // Transaction Filter Listeners (oninput for text, onchange for date/select for better performance)
+            document.getElementById('searchKeterangan').oninput = applyTransactionFiltersAndRender;
+            document.getElementById('filterTanggalMulai').onchange = applyTransactionFiltersAndRender;
+            document.getElementById('filterTanggalAkhir').onchange = applyTransactionFiltersAndRender;
+            document.getElementById('filterJenisTransaksi').onchange = applyTransactionFiltersAndRender;
+            document.getElementById('toggleFilterBtn').onclick = toggleFilterSection;
+
 
             window.addEventListener('click', function (event) {
+                // Close modals if click is outside their content
                 document.querySelectorAll('.modal.show').forEach(modal => {
-                    // Close modal only if the click is on the backdrop itself, not on its content
-                    if (event.target == modal && modal.id !== 'calculatorModal') { // Prevent calculator from closing on backdrop click for now
+                    const modalContent = modal.querySelector('.modal-content');
+                    // Check if modalContent exists and if the click is directly on the modal backdrop
+                    if (modalContent && event.target == modal) {
                         closeModal(modal.id);
                     }
                 });
+                // Close doctor dropdown if click is outside
+                const dokterDropdownContainer = document.querySelector('.dokter-dropdown-container');
+                if (dokterDropdownContainer && !dokterDropdownContainer.contains(event.target) && document.getElementById('dokterDropdownListWrapper').classList.contains('open')) {
+                    closeDoctorDropdown();
+                }
             });
 
             window.addEventListener('keydown', function (event) {
                 if (event.key === "Escape" || event.key === "Esc") {
                     document.querySelectorAll('.modal.show').forEach(modal => closeModal(modal.id));
                     if (document.getElementById('sidebar').classList.contains('open')) {
-                        closeDrawer(); // Close drawer on Escape key if open
+                        closeDrawer();
+                    }
+                    if (document.getElementById('dokterDropdownListWrapper').classList.contains('open')) {
+                        closeDoctorDropdown();
                     }
                 }
             });
@@ -2818,6 +3250,7 @@
 
             initializeFirebase();
 
+            // Delay initAuth slightly to ensure Firebase SDKs are fully ready, especially with compat versions.
             setTimeout(() => {
                 initAuth();
             }, 150);
@@ -2825,7 +3258,8 @@
 
         if (typeof feather === 'undefined') {
             console.warn('Feather Icons CDN tidak termuat. Ikon mungkin tidak tampil.');
-            window.feather = { replace: () => { } };
+            // Provide a mock feather object if it's not loaded to prevent errors
+            window.feather = { replace: () => { console.warn("feather.replace called but Feather Icons not loaded."); } };
         }
 
     </script>
